@@ -10,6 +10,9 @@ namespace MainConsole
     {
         static void Main(string[] args)
         {
+            Player hero = new Player("Игрок Создатель Админ Руси Матушки");
+
+            Console.ReadKey();
         }
     }
 }
