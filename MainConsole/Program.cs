@@ -10,8 +10,9 @@ namespace MainConsole
     {
         static void Main(string[] args)
         {
-            Player hero = new Player("Игрок Создатель Админ Руси Матушки");
+            Player player = new Player("Админ 11111111111");
 
+            player.run();
             Console.ReadKey();
         }
     }
