@@ -43,6 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animals.cs" />
+    <Compile Include="Character.cs" />
+    <Compile Include="Humans.cs" />
+    <Compile Include="NonPlayer.cs" />
     <Compile Include="PartBody.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

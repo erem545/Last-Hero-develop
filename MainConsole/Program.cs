@@ -10,9 +10,12 @@ namespace MainConsole
     {
         static void Main(string[] args)
         {
-            Player player = new Player("Админ 11111111111");
-
-            player.run();
+            Player p1 = new Player("Денис ДОП АДМИН", 120, 10, 250);
+            Player p2 = new Player("БОООТТТТТ ДОП 222132131", 150, 10, 450);
+            p1.body.PartBodyManager("Damage", 10);
+            p1.ShowCharacteristic();
+            p1.body.PartBodyManager("Heal", 20);
+            p1.ShowCharacteristic();
             Console.ReadKey();
         }
     }

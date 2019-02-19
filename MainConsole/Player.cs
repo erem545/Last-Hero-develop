@@ -6,70 +6,79 @@ using System.Threading.Tasks;
 
 namespace MainConsole
 {
-    class Player : PartBody
+    class Player : Character
     {
         // Наименование
-        public static string mainName;
+        new public string MainName;
+        
+        float Armor { get; set; }
 
-        // Макс. здоровье
-        internal float MaxHealth { get { return maxHealth; } set { maxHealth = value; } }
-        float maxHealth;
+        public PartBody body  = new PartBody();
+        public PartBody head  = new PartBody();
+        public PartBody lhand = new PartBody();
+        public PartBody rhand = new PartBody();
+        public PartBody lfoot = new PartBody();
+        public PartBody rfoot = new PartBody();
 
         // Здоровье
-        internal float Health { get { return health; } set { health = body.GetStatus + head.GetStatus + lhand.GetStatus + rhand.GetStatus +  lfoot.GetStatus + rfoot.GetStatus; } }
+        float MaxHealth { get; set; }
+        float Health { get { return health; } set { health = SumStatusPart(); if (health > MaxHealth) health = MaxHealth; } }
         float health;
-        float PercentHealth { get { return health * 100 / maxHealth; } }
+        float PercentHealth { get { return Health * 100 / MaxHealth; } }
 
-        float armor; // Показатель брони
-        float endurance; // Показатель выносливости
+        //Выносливость
+        float MaxEndurance { get; set; }
+        float Endurance { get; set; }
+        float PercentEndurance { get { return Endurance * 100 / MaxEndurance; } }
 
-        static PartBody body  = new PartBody();
-        static PartBody head  = new PartBody();
-        static PartBody lhand = new PartBody();
-        static PartBody rhand = new PartBody();
-        static PartBody lfoot = new PartBody();
-        static PartBody rfoot = new PartBody();
-        
-
-        public Player(string _name)
+        public Player() : base()
         {
-            CreateBodyPart();
-            MaxHealth = Health;
-            mainName = _name;
-            endurance = 100;
-            armor = 0;
-            
+            Endurance = 0;
+            MaxEndurance = 0;
         }
+        public Player(string _name, float _maxHealth, float _armor, float _maxEndurance) : base (_name, _maxHealth,_armor)
+        {
+            MainName = _name;
+            MaxHealth = _maxHealth;
+
+            body  = new PartBody("Body",       true, MaxHealth);
+            head  = new PartBody("Head",       true, MaxHealth);
+            lhand = new PartBody("Left Hand",  true, MaxHealth);
+            rhand = new PartBody("Right Hand", true, MaxHealth);
+            lfoot = new PartBody("Left Foot",  true, MaxHealth);
+            rfoot = new PartBody("Right Foot", true, MaxHealth);
+            Health = SumStatusPart();
+            Armor = _armor;
+            Endurance = _maxEndurance;
+            MaxEndurance = _maxEndurance;
+        }
+        public float SumStatusPart()
+        {
+            return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
+        }
+
         /// <summary>
-        /// Создание частей тела
+        /// Показать характеристики
         /// </summary>
-        void CreateBodyPart()
+        public override void ShowCharacteristic()
         {
-            body  = new PartBody("Body",       null, true, 150);
-            head  = new PartBody("Head",       body, true, 150);
-            lhand = new PartBody("Left Hand",  body, true, 150);
-            rhand = new PartBody("Right Hand", body, true, 150);
-            lfoot = new PartBody("Left Foot",  body, true, 150);
-            rfoot = new PartBody("Right Foot", body, true, 150);
-            Health += 1;
-        }
-        public override string ToString()
-        {
-            
-            Health += 1;
-            return ($"*{mainName}*\nЗдоровье:\t{Health} / {MaxHealth}\t({PercentHealth}% / 100%)\nВыносливость:\t{endurance}\nБроня:\t\t{armor}");
-        }
-        public void run()
-        {
-            body.PartBodyManager("Damage",20);
-
+            Health = body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
+            Console.WriteLine(ToString());
             Console.WriteLine(body.ToString());
             Console.WriteLine(head.ToString());
             Console.WriteLine(lhand.ToString());
             Console.WriteLine(rhand.ToString());
             Console.WriteLine(lfoot.ToString());
             Console.WriteLine(rfoot.ToString());
-            Console.WriteLine(this.ToString());
+        }
+
+        public override string ToString()
+        {       
+            return (
+                $"*{MainName}*\n" +
+                $"Здоровье:\t{Health} / {MaxHealth}\t({PercentHealth}% / 100%)\n" +
+                $"Выносливость:\t{Endurance} / {MaxEndurance}\t({PercentEndurance}% / 100%)\n" +
+                $"Броня:\t\t{Armor}");
         }
     }
 }

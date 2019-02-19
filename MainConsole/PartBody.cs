@@ -11,26 +11,20 @@ namespace MainConsole
         public string Name { get; set; } // Название 
 
         // Макс. состояние      
-        float MaxStatus { get { return maxStatus; } set { maxStatus = value; } }
-        float maxStatus;
+        float MaxStatus { get; set; }
+
         // Состояние
-        float Status { get { return status; } set { status = value; } }
+        internal float Status { get { return status; } set { if (value + status > MaxStatus) status = MaxStatus; status = value; } }
         float status;
-        float PercentStatus { get { return status * 100 / maxStatus; } }
-        internal float GetStatus { get { return Status * multiplayOut; } }
+        float PercentStatus { get { return Status * 100 / MaxStatus; } }
 
         float multiplayDamage; // Мультипликатор урона
         float multiplayOut; // Мультипликатор на выход
         
         bool ok; // Наличие
-        PartBody parent; // Родитель
         public PartBody()
         {
-            Name = null;
-            MaxStatus = 0;
-            Status = 0;
-            ok = false;
-            parent = null;
+
         }
         public PartBody(string _name)
         {
@@ -39,7 +33,6 @@ namespace MainConsole
             MaxStatus = 0;
             Status = 0;
             ok = false;
-            parent = null;
         }
 
         /// <summary>
@@ -50,58 +43,62 @@ namespace MainConsole
         /// <param name="_parent"></param>                                                           
         /// <param name="_ok"></param>                                                                 
         /// <param name="_maxStatus"></param>                                                         
-        public PartBody(string _name, PartBody _parent, bool _ok, float _maxStatus)
+        public PartBody(string _name, bool _ok, float _maxStatus)
         {
             // Обязательный порядок - сначала имя, потом объявление костант
             Name = _name;
             CreateConstants();
-            MaxStatus = _maxStatus;
-            Status = _maxStatus;
+
+            MaxStatus = _maxStatus * multiplayOut;
+            Status = MaxStatus;           
             ok = _ok;                
-            parent = _parent;
         }
 
         /// <summary>
         /// Лечение части тела на value единиц
         /// </summary>
         /// <param Name="stat"></param>
-        public float Heal(float value)
+        float Heal(float value)
         {
-            if (ok)
-                return value;
+            if (Status < MaxStatus)
+                if (ok)
+                    return value;
             return 0;
         }
         /// <summary>
         /// Повреждение части тела на value единиц
         /// </summary>
         /// <param Name="stat"></param>
-        public float Damage(float value)
+        float Damage(float value)
         {            
             if (ok)
-                return value * multiplayDamage;
+                return value * multiplayDamage / (1-multiplayOut);
             return 0;
         }
 
         /// <summary>
         /// Значение параметра index определяет какая функция начнет свою работу: Damege, Heal
         /// </summary>
-        public void PartBodyManager(string _name, float value)
+        public void PartBodyManager(string name, float value)
         {
-            switch (_name)
+            switch (name)
             {
-                case "Damege":
+                case "Damage":
                     Status += Damage(value*=-1);
                     break;
                 case "Heal":
                     Status += Heal(value);
+                    if (Status > MaxStatus) Status = MaxStatus;
                     break;
-                default: throw new Exception("Указанного инструмента не существует!");
-            }          
+                default: return;
+            }
+            
         }
+
         /// <summary>
         /// Задать индивидульные значения для полей
         /// </summary>
-        public void CreateConstants()
+        internal void CreateConstants()
         {
             switch (Name)
             {
@@ -131,11 +128,12 @@ namespace MainConsole
                     break;
             }
         }
+
         public override string ToString()
         {
-            return $"\n{Name}\n" +
+            return $"{Name}\n" +
                    $"Наличие:\t{ok}\n" +
-                   $"Состояние:\t{Status} / {MaxStatus}\t({PercentStatus}% / 100%)\n";
+                   $"Состояние:\t{Status} / {MaxStatus} \t\t({PercentStatus}% / 100%)\n";
         }
     }
     
