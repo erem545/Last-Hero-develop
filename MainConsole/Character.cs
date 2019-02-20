@@ -11,49 +11,50 @@ namespace MainConsole
         // Наименование
         public string MainName;
 
-
-
+        // Тип объекта
+        readonly string TypeObj = "Персонаж";
         // Здоровье
-        float MaxHealth { get; set; }
-        float Health { get; set; }
-        float PercentHealth { get { return Health * 100 / MaxHealth; } }
-        
-        // Броня
-        float Armor { get { return armor; } set { armor = value; } }
-        float armor;
+        internal float MaxHealth;
+        internal float Health;
+        internal float PercentHealth { get { return Health * 100 / MaxHealth; } }
 
+        // Узлы
+        PartBodyNode body;
 
-        /// <summary>
-        /// Пустой конструктор
-        /// </summary>
         public Character()
         {
             MainName = null;
             MaxHealth = 0;
             Health = 0;
-            Armor = 0;
         }
-        public Character(string _name, float _maxHealth, float _armor)
+        public Character(string _name, float _maxHealth)
         {
             MainName = _name;
             MaxHealth = _maxHealth;
             Health = _maxHealth;
-            Armor = _armor;
         }
 
         /// <summary>
-        /// Вывести информацию
+        /// Обновить данные
         /// </summary>
-        public virtual void ShowCharacteristic()
+        void Refresh()
+        {
+            Health = body.SumStatus;
+        }
+        /// <summary>
+        /// Показать всю информацию информацию
+        /// </summary>
+        public virtual void  ShowAllInfo()
         {
             Console.WriteLine(ToString());
         }
+
+
         public override string ToString()
         {
             return (
-                $"*{MainName}*\n" +
-                $"Здоровье:\t{Health} / {MaxHealth}\t({PercentHealth}% / 100%)\n" +
-                $"Броня:\t\t{Armor}");
+                $"{MainName}\n" +
+                $"Здоровье: {Health} / {MaxHealth} ({Math.Round(PercentHealth)}% / 100%)\n");
         }
     }
 }

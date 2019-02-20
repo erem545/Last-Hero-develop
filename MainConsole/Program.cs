@@ -10,12 +10,13 @@ namespace MainConsole
     {
         static void Main(string[] args)
         {
-            Player p1 = new Player("Денис ДОП АДМИН", 120, 10, 250);
-            Player p2 = new Player("БОООТТТТТ ДОП 222132131", 150, 10, 450);
-            p1.body.PartBodyManager("Damage", 10);
-            p1.ShowCharacteristic();
-            p1.body.PartBodyManager("Heal", 20);
-            p1.ShowCharacteristic();
+            Player p1 = new Player("Воин", 105, 20);
+
+            p1.body.lfoot.Damage(3);
+            p1.body.rhand.Damage(2);
+            p1.Refresh();
+            p1.ShowAllInfo();
+
             Console.ReadKey();
         }
     }

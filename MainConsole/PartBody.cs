@@ -8,32 +8,22 @@ namespace MainConsole
 {
     class PartBody
     {
-        public string Name { get; set; } // Название 
+        public string Name; // Название 
 
-        // Макс. состояние      
-        float MaxStatus { get; set; }
+        // Броня
+        float Armor;
 
         // Состояние
-        internal float Status { get { return status; } set { if (value + status > MaxStatus) status = MaxStatus; status = value; } }
-        float status;
+        internal float Status;
+        float MaxStatus;
         float PercentStatus { get { return Status * 100 / MaxStatus; } }
+
 
         float multiplayDamage; // Мультипликатор урона
         float multiplayOut; // Мультипликатор на выход
-        
-        bool ok; // Наличие
-        public PartBody()
-        {
 
-        }
-        public PartBody(string _name)
-        {
-            Name = _name;
-            CreateConstants();
-            MaxStatus = 0;
-            Status = 0;
-            ok = false;
-        }
+        internal bool ok; // Наличие
+
 
         /// <summary>
         /// При создании новой части, для успешной работы, параметр _name 
@@ -43,62 +33,76 @@ namespace MainConsole
         /// <param name="_parent"></param>                                                           
         /// <param name="_ok"></param>                                                                 
         /// <param name="_maxStatus"></param>                                                         
-        public PartBody(string _name, bool _ok, float _maxStatus)
+        public PartBody(string _name, float _maxStatus)
         {
+            ok = true;
             // Обязательный порядок - сначала имя, потом объявление костант
             Name = _name;
-            CreateConstants();
-
+            CreateMultyplay();
             MaxStatus = _maxStatus * multiplayOut;
-            Status = MaxStatus;           
-            ok = _ok;                
+            Status = _maxStatus * multiplayOut;                       
         }
-
         /// <summary>
         /// Лечение части тела на value единиц
         /// </summary>
         /// <param Name="stat"></param>
-        float Heal(float value)
+        public void Heal(float value)
         {
-            if (Status < MaxStatus)
-                if (ok)
-                    return value;
-            return 0;
+            if (ok)
+            {
+                if (Status + value < MaxStatus)
+                    Status += value;
+                else
+                    Status = MaxStatus;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Лечение на {(value)} единиц {ToString()}");
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Отсутствие части тела: {ToString()}");
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
         }
         /// <summary>
         /// Повреждение части тела на value единиц
         /// </summary>
         /// <param Name="stat"></param>
-        float Damage(float value)
-        {            
-            if (ok)
-                return value * multiplayDamage / (1-multiplayOut);
-            return 0;
-        }
-
-        /// <summary>
-        /// Значение параметра index определяет какая функция начнет свою работу: Damege, Heal
-        /// </summary>
-        public void PartBodyManager(string name, float value)
+        public void Damage(float value)
         {
-            switch (name)
+            if (ok)
             {
-                case "Damage":
-                    Status += Damage(value*=-1);
-                    break;
-                case "Heal":
-                    Status += Heal(value);
-                    if (Status > MaxStatus) Status = MaxStatus;
-                    break;
-                default: return;
-            }
-            
+                Status += value*multiplayDamage*-1;
+                if (Status < 0)
+                    Status = 0;
+                if (Status < 1)
+                {
+                    ok = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Уничтожено {ToString()}");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Получено {value * multiplayDamage}({value}) урона по {ToString()}");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+            }     
         }
-
+        /// <summary>
+        /// Обновить информацию части тела
+        /// </summary>
+        public void Refresh()
+        {
+            if (!ok)
+                Status = 0;
+        }
         /// <summary>
         /// Задать индивидульные значения для полей
         /// </summary>
-        internal void CreateConstants()
+        void CreateMultyplay()
         {
             switch (Name)
             {
@@ -131,9 +135,8 @@ namespace MainConsole
 
         public override string ToString()
         {
-            return $"{Name}\n" +
-                   $"Наличие:\t{ok}\n" +
-                   $"Состояние:\t{Status} / {MaxStatus} \t\t({PercentStatus}% / 100%)\n";
+            return $"{Name} ({Status} / {MaxStatus})";
+            //return $"{Name} ({Math.Round(PercentStatus)}% / 100%)";
         }
     }
     
