@@ -11,7 +11,7 @@ namespace MainConsole
         public string Name; // Название 
 
         // Броня
-        float Armor;
+        internal float Armor;
 
         // Состояние
         internal float Status;
@@ -24,7 +24,10 @@ namespace MainConsole
 
         internal bool ok; // Наличие
 
+        public PartBody()
+        {
 
+        }
         /// <summary>
         /// При создании новой части, для успешной работы, параметр _name 
         /// задается одним из названий: Body, Head, Left Hand, Right Hand, Left Foot, Right Foot  
@@ -48,22 +51,18 @@ namespace MainConsole
         /// <param Name="stat"></param>
         public void Heal(float value)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             if (ok)
             {
                 if (Status + value < MaxStatus)
                     Status += value;
                 else
                     Status = MaxStatus;
-                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"Лечение на {(value)} единиц {ToString()}");
-                Console.ForegroundColor = ConsoleColor.Gray;
             }
             else
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"Отсутствие части тела: {ToString()}");
-                Console.ForegroundColor = ConsoleColor.Gray;
-            }
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
         /// <summary>
         /// Повреждение части тела на value единиц
@@ -71,6 +70,7 @@ namespace MainConsole
         /// <param Name="stat"></param>
         public void Damage(float value)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             if (ok)
             {
                 Status += value*multiplayDamage*-1;
@@ -79,18 +79,15 @@ namespace MainConsole
                 if (Status < 1)
                 {
                     ok = false;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Уничтожено {ToString()}");
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.WriteLine($" Уничтожено {ToString()}");
                 }
                 else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Получено {value * multiplayDamage}({value}) урона по {ToString()}");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                }
-            }     
+                    Console.WriteLine($" {value * multiplayDamage}({value}) урона по {Name}{ToString()}");
+            }
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
+
+
         /// <summary>
         /// Обновить информацию части тела
         /// </summary>
@@ -99,6 +96,7 @@ namespace MainConsole
             if (!ok)
                 Status = 0;
         }
+
         /// <summary>
         /// Задать индивидульные значения для полей
         /// </summary>
@@ -135,9 +133,113 @@ namespace MainConsole
 
         public override string ToString()
         {
-            return $"{Name} ({Status} / {MaxStatus})";
-            //return $"{Name} ({Math.Round(PercentStatus)}% / 100%)";
+            //return $"{Name} ({Status} / {MaxStatus})";
+            return $"({Math.Round(PercentStatus)}% / 100%) ";
         }
     }
-    
+    class PartBodyNode : PartBody
+    {
+        public float MaxSumStatus;
+        public float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
+
+        public PartBody body;
+        public PartBody head;
+        public PartBody lhand;
+        public PartBody rhand;
+        public PartBody lfoot;
+        public PartBody rfoot;
+
+        public bool ok;
+
+        public PartBodyNode()
+        {
+
+        }
+        public PartBodyNode(float _maxSum)
+        {
+            ok = true;
+            body = new PartBody("Body", _maxSum);
+            head = new PartBody("Head", _maxSum);
+            lhand = new PartBody("Left Hand", _maxSum);
+            rhand = new PartBody("Right Hand", _maxSum);
+            lfoot = new PartBody("Left Foot", _maxSum);
+            rfoot = new PartBody("Right Foot", _maxSum);
+            MaxSumStatus = body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
+        }
+        void Dead()
+        {
+            ok = false;
+            body.ok = false;
+            head.ok = false;
+            lhand.ok = false;
+            rhand.ok = false;
+            lfoot.ok = false;
+            rfoot.ok = false;
+            body.Refresh();
+            head.Refresh();
+            lhand.Refresh();
+            rhand.Refresh();
+            lfoot.Refresh();
+            rfoot.Refresh();
+        }
+
+        /// <summary>
+        /// Случайный урон (НЕТ связи с характеристиками)
+        /// </summary>
+        /// <returns></returns>
+        float RandomDamage()
+        {
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            return rnd.Next(1, 3);
+        }
+
+        /// <summary>
+        /// Урон по случайной части тела
+        /// </summary>
+        public void AttackToRandomPart()
+        {
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            int index = rnd.Next(0,5);
+            switch (index)
+            {
+                case 0:
+                    head.Damage(RandomDamage());
+                    break;
+                case 1:
+                    head.Damage(RandomDamage());
+                    break;
+                case 2:
+                    lhand.Damage(RandomDamage());
+                    break;
+                case 3:
+                    rhand.Damage(RandomDamage());
+                    break;
+                case 4:
+                    lfoot.Damage(RandomDamage());
+                    break;
+                case 5:
+                    rfoot.Damage(RandomDamage());
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Показать все детали
+        /// </summary>
+        internal void ShowDetals()
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Торс:   {body.ToString()}\tБроня: {body.Armor}");
+            Console.WriteLine($"Голова: {head.ToString()}\tБроня: {head.Armor}");
+            Console.WriteLine($"Л.Рука: {lhand.ToString()}\tБроня: {lhand.Armor}");
+            Console.WriteLine($"П.Рука: {rhand.ToString()}\tБроня: {rhand.Armor}");
+            Console.WriteLine($"Л.Нога: {lfoot.ToString()}\tБроня: {lfoot.Armor}");
+            Console.WriteLine($"П.Нога: {rfoot.ToString()}\tБроня: {rfoot.Armor}");
+            Console.WriteLine();
+        }
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+    }
 }

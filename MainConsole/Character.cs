@@ -19,7 +19,7 @@ namespace MainConsole
         internal float PercentHealth { get { return Health * 100 / MaxHealth; } }
 
         // Узлы
-        PartBodyNode body;
+        public PartBodyNode bodyNode;
 
         public Character()
         {
@@ -35,18 +35,33 @@ namespace MainConsole
         }
 
         /// <summary>
+        /// Атаковать противника person
+        /// </summary>
+        /// <param name="person"></param>
+        public void ToAttack(Character person)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string text = $"{MainName}: Нанес урон {person.MainName}";
+            Console.Write(text);
+            bodyNode.AttackToRandomPart();
+            Refresh();
+        }
+
+        /// <summary>
         /// Обновить данные
         /// </summary>
-        void Refresh()
+        public void Refresh()
         {
-            Health = body.SumStatus;
+            Health = bodyNode.SumStatus;
         }
         /// <summary>
         /// Показать всю информацию информацию
         /// </summary>
-        public virtual void  ShowAllInfo()
+        public void ShowAllInfo()
         {
+            Console.WriteLine("___________________________________");
             Console.WriteLine(ToString());
+            bodyNode.ShowDetals();
         }
 
 
@@ -54,7 +69,7 @@ namespace MainConsole
         {
             return (
                 $"{MainName}\n" +
-                $"Здоровье: {Health} / {MaxHealth} ({Math.Round(PercentHealth)}% / 100%)\n");
+                $"Здоровье:\t{Health} / {MaxHealth} ({Math.Round(PercentHealth)}% / 100%)\n");
         }
     }
 }

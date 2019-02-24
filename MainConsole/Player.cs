@@ -11,9 +11,6 @@ namespace MainConsole
         // Тип объекта
         readonly string TypeObj = "Игрок";
 
-        // Узел
-        public PartBodyNode body;
-
         //Выносливость
         float MaxEndurance;
         float Endurance;
@@ -31,24 +28,12 @@ namespace MainConsole
             Health = _maxHealth;
             Endurance = _maxEndurance;
             MaxEndurance = _maxEndurance;
-            body = new PartBodyNode(_maxHealth);
-        }
-
-        public override void ShowAllInfo()
-        {
-            Console.WriteLine(ToString());
-            body.ShowDetals();
-        }
-
-        public void Refresh()
-        {
-            body.Refresh();
-            Health = body.SumStatus;
+            bodyNode = new PartBodyNode(_maxHealth);
         }
 
         public override string ToString()
         {
-            return (base.ToString() + $"Выносливость: {Endurance} / {MaxEndurance} ({Math.Round(PercentEndurance)}% / 100%)\n");
+            return (base.ToString() + $"Выносливость:\t{Endurance} / {MaxEndurance} ({Math.Round(PercentEndurance)}% / 100%)");
             //return (base.ToString() + $"Выносливость: {Math.Round(Endurance)} / {Math.Round(MaxEndurance)}\n");
         }
     }

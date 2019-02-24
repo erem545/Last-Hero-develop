@@ -10,13 +10,14 @@ namespace MainConsole
     {
         static void Main(string[] args)
         {
-            Player p1 = new Player("Воин", 105, 20);
-
-            p1.body.lfoot.Damage(3);
-            p1.body.rhand.Damage(2);
-            p1.Refresh();
+            Player p1 = new Player("Пехотинец (2 ур.)", 105, 20);
+            Player p2 = new Player("Бугай (3 ур.)",200, 15);
             p1.ShowAllInfo();
-
+            p2.ShowAllInfo();
+            p1.ToAttack(p2);
+            p2.ToAttack(p1);
+            p1.ShowAllInfo();
+            p2.ShowAllInfo();
             Console.ReadKey();
         }
     }
