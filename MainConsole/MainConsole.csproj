@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Character.cs" />
+    <Compile Include="GUI.cs" />
     <Compile Include="PartBody.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

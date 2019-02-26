@@ -10,15 +10,34 @@ namespace MainConsole
     {
         static void Main(string[] args)
         {
-            Player p1 = new Player("Пехотинец (2 ур.)", 105, 20);
-            Player p2 = new Player("Бугай (3 ур.)",200, 15);
-            p1.ShowAllInfo();
-            p2.ShowAllInfo();
-            p1.ToAttack(p2);
-            p2.ToAttack(p1);
-            p1.ShowAllInfo();
-            p2.ShowAllInfo();
-            Console.ReadKey();
+            Player p1 = new Player("Пехотинец", 105, 20, Race.Humans);
+            Player p2 = new Player("Бугай", 250, 30, Race.Ogres);
+
+
+            do
+            {
+                int doing = GUI.ShowMenu(p2, "\n** Главное меню **", "Атаковать", "Обороняться", "Показать статистику", "Показать статистику противника");
+                switch (doing)
+                {
+                    case 1:
+                        p2.ToAttack(p1);
+                        Console.ReadKey();
+                        break;
+                    case 2:
+                        p2.ToDefend(p1);
+                        Console.ReadKey();
+                        break;
+                    case 3:
+                        p2.ShowAllInfo();
+                        Console.ReadKey();
+                        break;
+                    case 4:
+                        p1.ShowAllInfo();
+                        Console.ReadKey();
+                        break;
+                }
+            } while (true);
+         
         }
     }
 }
