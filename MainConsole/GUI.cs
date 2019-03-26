@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MainConsole.NPS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -82,14 +83,67 @@ namespace MainConsole
                 return ++IndCur;
             } //Вывод меню
         }
+        public static void Action(Character character)
+        {
+            do
+            {
+                Console.Clear();
+                Console.WriteLine($"Персонаж: {character.MainName}");
+                Console.WriteLine($"\"I\" - инвентарь \"O\" - локация  \"P\" - профиль");
+                Console.WriteLine($"\"A\" - атаковать \"S\" - общаться \"D\" - двигаться");
+                if (character.isAdmin)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\"Z\" - получить 10 урона \"X\" - восстановить 10 здоровья \"C\" - ...");
 
-        //public GUI(int a, int b, Race race )
-        //{
 
-        //}
-        //public static GUI NewDeadRace(int a, int b)
-        //{
-        //    return null;
-        //}
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.I:
+                        Console.WriteLine($"Инвентарь");
+                        break;
+                    case ConsoleKey.O:
+                        Console.WriteLine($"Локация");
+                        break;
+                    case ConsoleKey.P:
+                        Console.WriteLine($"Профиль");
+                        character.ShowAllInfo();
+                        break;
+
+                    case ConsoleKey.A:
+                        Console.WriteLine($"Атака");
+                        break;
+                    case ConsoleKey.S:
+                        Console.WriteLine($"Общение");
+                        break;
+                    case ConsoleKey.D:
+                        Console.WriteLine($"Двигаться");
+                        break;
+
+                    case ConsoleKey.Z:
+                        Console.WriteLine($"Получить урон");
+                        character.ToDamage(10);
+                        break;
+                    case ConsoleKey.X:
+                        Console.WriteLine($"Восстановитть здоровье");
+                        character.ToHeal(10);
+                        break;
+                    case ConsoleKey.C:
+                        Console.WriteLine($"...");
+                        break;
+                    default:
+                        Console.WriteLine($"Ничего");
+                        break;
+                }
+                Console.ReadKey();
+            } while (true);
+        }
+        public static void G1()
+        {
+
+        }
     }
 }

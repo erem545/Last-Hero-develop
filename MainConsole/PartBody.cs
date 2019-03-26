@@ -8,28 +8,20 @@ namespace MainConsole
 {
     class PartBody
     {
-        public string Name; // Название 
-
-        // Броня
-        internal float Armor;
-
-        // Состояние
-        internal float Status;
-        float MaxStatus;
-        float PercentStatus { get { return Status * 100 / MaxStatus; } }
-
-
-        float multiplayDamage; // Мультипликатор урона
+        public string  Name; // Название 
+        internal float Armor; // Броня
+        internal float Status; // Состояние
+        internal float MaxStatus; // Макс. Состояние
+        float          PercentStatus { get { return Status * 100 / MaxStatus; } }
+        float          multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
-
-        internal bool ok;// Наличие
-
-        internal float RezisitArmor = 0.02f;
-
+        internal bool  ok; // Наличие
+        internal float RezisitArmor = 0.02f; // Сопротивление урону от брони
         public PartBody()
         {
 
         }
+
         /// <summary>
         /// При создании новой части, для успешной работы, параметр _name 
         /// задается одним из названий: Body, Head, Left Hand, Right Hand, Left Foot, Right Foot  
@@ -54,6 +46,7 @@ namespace MainConsole
         /// <param Name="stat"></param>
         internal void Heal(float value)
         {
+            Console.ForegroundColor = ConsoleColor.Gray;
             if (ok)
             {               
                 if (Status + value < MaxStatus)
@@ -73,12 +66,13 @@ namespace MainConsole
         /// <param Name="stat"></param>
         internal void Damage(float value)
         {
+            Console.ForegroundColor = ConsoleColor.Gray;
             if (ok)
             {
                 Status += ( (value * multiplayDamage) * (1 - (RezisitArmor * Armor)) ) * -1;
                 if (Status < 0)
                     Status = 0;
-                Console.WriteLine($"\n{((value * multiplayDamage) * (1 - (RezisitArmor * Armor)))}({value}) урона по {ToString()}");
+                Console.WriteLine($"{((value * multiplayDamage) * (1 - (RezisitArmor * Armor)))}({value}) урона по {ToString()}");
                 if (Status < 1)
                 {
                     ok = false;
@@ -93,6 +87,7 @@ namespace MainConsole
         /// </summary>
         internal void Refresh()
         {
+            Console.ForegroundColor = ConsoleColor.Gray;
             if (!ok)
                 Status = 0;
             else
@@ -168,8 +163,7 @@ namespace MainConsole
         public PartBody rhand;
         public PartBody lfoot;
         public PartBody rfoot;
-
-        new bool ok;
+        
 
         public PartBodyNode()
         {
@@ -188,20 +182,26 @@ namespace MainConsole
 
         public void DistributeHealth(float value)
         {
-            if (body.ok)
-                body.Status += value * body.multiplayOut;
-            if (head.ok)
-                head.Status += value * head.multiplayOut;
-            if (lhand.ok)
-                lhand.Status += value * lhand.multiplayOut;
-            if (rhand.ok)
-                rhand.Status += value * rhand.multiplayOut;
-            if (lfoot.ok)
-                lfoot.Status += value * lfoot.multiplayOut;
-            if (rfoot.ok)
-                rfoot.Status += value * rfoot.multiplayOut;
+            //lfoot.Status += value * lfoot.multiplayOut;
+            body.Heal(value * body.multiplayOut);
+            head.Heal(value * head.multiplayOut);
+            lhand.Heal(value * lhand.multiplayOut);
+            rhand.Heal(value * rhand.multiplayOut);
+            lfoot.Heal(value * lfoot.multiplayOut);
+            rfoot.Heal(value * rfoot.multiplayOut);
+            Refresh();
         }
-
+        public void DistributedDamage(float value)
+        {
+            //lfoot.Status -= value * lfoot.multiplayOut;
+            body.Damage(value * body.multiplayOut);
+            head.Damage(value * head.multiplayOut);
+            lhand.Damage(value * lhand.multiplayOut);
+            rhand.Damage(value * rhand.multiplayOut);
+            lfoot.Damage(value * lfoot.multiplayOut);
+            rfoot.Damage(value * rfoot.multiplayOut);
+            Refresh();
+        }
         /// <summary>
         /// Смерть
         /// </summary>
@@ -226,44 +226,56 @@ namespace MainConsole
         /// Случайный урон (НЕТ связи с характеристиками)
         /// </summary>
         /// <returns></returns>
-        float RandomDamage()
+        float RandomDamage(float min, float max)
         {
             Random rnd = new Random(DateTime.Now.Millisecond);
-            return rnd.Next(5, 10);
+            return rnd.Next((int)min, (int)max);
         }
 
         /// <summary>
         /// Урон по случайной части тела
         /// </summary>
-        public void AttackToRandomPart()
+        public void AttackToRandomPart(float min, float max)
         {
             Random rnd = new Random(DateTime.Now.Millisecond);
-            int index = rnd.Next(0, 5);
+            int index = rnd.Next(0, 6);
             switch (index)
             {
                 case 0:
                     if (body.ok)
-                        body.Damage(RandomDamage());
+                        body.Damage(RandomDamage(min, max));
+                    else
+                        AttackToRandomPart(min, max);
                     break;
                 case 1:
                     if (head.ok)
-                        head.Damage(RandomDamage());
+                        head.Damage(RandomDamage(min, max));
+                    else
+                        AttackToRandomPart(min, max);
                     break;
                 case 2:
                     if (lhand.ok)
-                        lhand.Damage(RandomDamage());
+                        lhand.Damage(RandomDamage(min, max));
+                    else
+                        AttackToRandomPart(min, max);
                     break;
                 case 3:
                     if (rhand.ok)
-                        rhand.Damage(RandomDamage());
+                        rhand.Damage(RandomDamage(min, max));
+                    else
+                        AttackToRandomPart(min, max);
                     break;
                 case 4:
                     if (lfoot.ok)
-                        lfoot.Damage(RandomDamage());
+                        lfoot.Damage(RandomDamage(min, max));
+                    else
+                        AttackToRandomPart(min, max);
                     break;
                 case 5:
                     if (rfoot.ok)
-                        rfoot.Damage(RandomDamage());
+                        rfoot.Damage(RandomDamage(min, max));
+                    else
+                        AttackToRandomPart(min, max);
                     break;
             }
         }
@@ -280,7 +292,7 @@ namespace MainConsole
               Console.Write($"П.Рука:"); Console.Write($"\t{rhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {rhand.Armor}");
               Console.Write($"Л.Нога:"); Console.Write($"\t{lfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {lfoot.Armor}");
               Console.Write($"П.Нога:"); Console.Write($"\t{rfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {rfoot.Armor}");
-            
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
         public override string ToString()
         {
