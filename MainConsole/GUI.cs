@@ -89,6 +89,7 @@ namespace MainConsole
             {
                 Console.Clear();
                 Console.WriteLine($"Персонаж: {character.MainName}");
+                Console.WriteLine(character.ToString());
                 Console.WriteLine($"\"I\" - инвентарь \"O\" - локация  \"P\" - профиль");
                 Console.WriteLine($"\"A\" - атаковать \"S\" - общаться \"D\" - двигаться");
                 if (character.isAdmin)
@@ -139,11 +140,8 @@ namespace MainConsole
                         break;
                 }
                 Console.ReadKey();
+                character.Refresh();
             } while (true);
-        }
-        public static void G1()
-        {
-
         }
     }
 }

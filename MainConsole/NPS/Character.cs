@@ -9,22 +9,33 @@ namespace MainConsole.NPS
     class Character 
     {
         public bool         isAdmin; // Является админом
+        bool                ok; // Существование
         public string       MainName; // Наименование
-        protected float     MaxEndurance; //Макс. Выносливость
-        float               Endurance; //Выносливость
+
+        // Выносливость
+        protected float     MaxEndurance; // Макс. выносливость
+        float               Endurance; // Выносливость
         float               PercentEndurance { get { return Endurance * 100 / MaxEndurance; } }
         protected float     EnduranceRegenPercent; // Реген. выносливости
+
+        // Здоровье
         protected float     MaxHealth; // Макс. Здоровье
         float               Health; // Здоровье
         float               PercentHealth { get { return Health * 100 / MaxHealth; } }
         protected float     HealthRegenPercent;// Реген. Здоровья
+
+        // Защита
         float               Armor; // Общая защита
+
+        // Атака
         float               Attack { get { return (minAttack + maxAttack) / 2; } }// Атака
         protected float     minAttack; // Мин. Атака
         protected float     maxAttack; // Макс. Атака
+
+        // Другое
         float               Level; // Уровень
         int                 XP; // Опыт
-        bool                ok; // Существование
+        
         public PartBodyNode bodyNode; // Узел для частей тела
 
         public Character()
@@ -52,36 +63,34 @@ namespace MainConsole.NPS
             MaxEndurance = _maxEndurance;
             isAdmin = isAdm;
         }
-
         /// <summary>
         /// Атаковать противника person
         /// </summary>
         /// <param name="person">Противник</param>
         internal void ToAttack(Character person)
         {
-            //if ( (ok) && (person.ok) )
-            //{                           
-            //    string text = $"\n{MainName} нанес урон {person.MainName}";
-            //    Console.Write(text);
-            //    bodyNode.RezisitArmor = 0.04f;
-            //    person.bodyNode.AttackToRandomPart(minAttack, maxAttack);
-            //    bodyNode.RezisitArmor = 0.02f;   
-            //    Console.ForegroundColor = ConsoleColor.Gray;
+            if ( (ok) && (person.ok) )
+            {                           
+                string text = $"\n{MainName} нанес урон {person.MainName}";
+                Console.Write(text);
+                bodyNode.RezisitArmor = 0.04f;
+                person.bodyNode.AttackToRandomPart(minAttack, maxAttack);
+                bodyNode.RezisitArmor = 0.02f;   
+                Console.ForegroundColor = ConsoleColor.Gray;
 
-            //    Refresh();
-            //    person.Refresh();
+                Refresh();
+                person.Refresh();
 
-            //    // Убийство противника
-            //    if (person.ok == false)
-            //        Console.Write($"{MainName} прикончил {person.MainName} | {XP += 20} xp");
-            //}
+                // Убийство противника
+                if (person.ok == false)
+                    Console.Write($"{MainName} прикончил {person.MainName} | {XP += 20} xp");
+            }
 
         }
-
         /// <summary>
         /// Нанести общее повреждение
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Значение</param>
         internal void ToDamage(float value)
         {
             Console.WriteLine($"Получен урон: {value} ед.");
@@ -96,7 +105,7 @@ namespace MainConsole.NPS
         /// <summary>
         /// Восстановить здоровье распределительно
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Значение</param>
         internal void ToHeal(float value)
         {
             Console.WriteLine($"Восстановление здоровья: {value} ед.");
@@ -126,7 +135,6 @@ namespace MainConsole.NPS
                 //    Console.Write($"{MainName} прикончил {person.MainName} | {XP += 20}");           
             }
         }
-
         /// <summary>
         /// Убить персонажа
         /// </summary>
@@ -138,7 +146,6 @@ namespace MainConsole.NPS
             bodyNode.Dead();
             Endurance = 0;
         }
-
         /// <summary>
         /// Обновить данные
         /// </summary>
@@ -188,7 +195,6 @@ namespace MainConsole.NPS
         /// </summary>
         public void ShowAllInfo()
         {
-            GUI.G1();
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("\n___________________________________");
             Console.WriteLine("               Профиль");
