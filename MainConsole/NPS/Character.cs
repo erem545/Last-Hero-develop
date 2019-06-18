@@ -3,34 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BankLibrary;
 
 namespace MainConsole.NPS
 {
     class Character 
     {
         public bool         isAdmin; // Является админом
-        bool                ok; // Существование
+        internal bool       ok; // Существование
         public string       MainName; // Наименование
 
         // Выносливость
         protected float     MaxEndurance; // Макс. выносливость
         float               Endurance; // Выносливость
-        float               PercentEndurance { get { return Endurance * 100 / MaxEndurance; } }
+        internal float      PercentEndurance { get { return Endurance * 100 / MaxEndurance; } }
         protected float     EnduranceRegenPercent; // Реген. выносливости
 
         // Здоровье
         protected float     MaxHealth; // Макс. Здоровье
         float               Health; // Здоровье
-        float               PercentHealth { get { return Health * 100 / MaxHealth; } }
+        internal  float     PercentHealth { get { return Health * 100 / MaxHealth; } }
         protected float     HealthRegenPercent;// Реген. Здоровья
 
         // Защита
         float               Armor; // Общая защита
 
         // Атака
-        float               Attack { get { return (minAttack + maxAttack) / 2; } }// Атака
-        protected float     minAttack; // Мин. Атака
-        protected float     maxAttack; // Макс. Атака
+        float Attack { get { return (minAttack + maxAttack) / 2; } }// Атака
+        internal float     minAttack; // Мин. Атака
+        internal float     maxAttack; // Макс. Атака
 
         // Другое
         float               Level; // Уровень
@@ -43,6 +44,7 @@ namespace MainConsole.NPS
             MainName = null;
             MaxHealth = 0;
             Health = 0;
+            HealthRegenPercent = 0;
             Level = 0;
             XP = 0;
             Endurance = 0;
@@ -56,11 +58,13 @@ namespace MainConsole.NPS
             MainName = _name;
             MaxHealth = _maxHealth;
             Health = _maxHealth;
+            HealthRegenPercent = 5;
             ok = true;
             bodyNode = new PartBodyNode(_maxHealth);
             Armor = bodyNode.SumArmor;
             Endurance = _maxEndurance;
             MaxEndurance = _maxEndurance;
+            EnduranceRegenPercent = 5;
             isAdmin = isAdm;
         }
         /// <summary>
@@ -69,23 +73,21 @@ namespace MainConsole.NPS
         /// <param name="person">Противник</param>
         internal void ToAttack(Character person)
         {
-            if ( (ok) && (person.ok) )
-            {                           
-                string text = $"\n{MainName} нанес урон {person.MainName}";
-                Console.Write(text);
-                bodyNode.RezisitArmor = 0.04f;
-                person.bodyNode.AttackToRandomPart(minAttack, maxAttack);
-                bodyNode.RezisitArmor = 0.02f;   
-                Console.ForegroundColor = ConsoleColor.Gray;
+            
 
+        }
+
+        internal void ToAttack(Character person, PartBody node)
+        {
+            if ((ok) && (person.ok))
+            {
+                Console.Write($"{DateTime.Now.ToString()} : {this.MainName} | {MainName} нанес {node.RandomDamage(this.minAttack, this.maxAttack) * node.multiplayDamage} урона по {node.Name} {person.MainName}\n");
                 Refresh();
                 person.Refresh();
-
                 // Убийство противника
                 if (person.ok == false)
                     Console.Write($"{MainName} прикончил {person.MainName} | {XP += 20} xp");
             }
-
         }
         /// <summary>
         /// Нанести общее повреждение
@@ -140,11 +142,17 @@ namespace MainConsole.NPS
         /// </summary>
         public void Kill()
         {
+            if (isAdmin)
+                return;
+            ok = false;
             Health = 0;
             Level = 0;
             XP = 0;
             bodyNode.Dead();
             Endurance = 0;
+            HealthRegenPercent = 0;
+            EnduranceRegenPercent = 0;
+            Armor = 0;
         }
         /// <summary>
         /// Обновить данные
@@ -152,43 +160,58 @@ namespace MainConsole.NPS
         public void Refresh()
         {
             Console.ForegroundColor = ConsoleColor.Gray;
-            if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
-                ok = false;
 
-            //Endurance += MaxEndurance * EnduranceRegenPercent;
-            //if (Endurance > MaxEndurance)
-            //    Endurance = MaxEndurance;
-            //else if (Endurance < 0)
-            //    Endurance = 0;
-            // Снижение урона при отсутствии части тела
+            // Отсутствие головы или тела - мгновенная смерть
+            if (!isAdmin) 
+                if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
+                    Kill();
 
-            if ((bodyNode.lhand.ok == false) || (bodyNode.rhand.ok == false))
-            {
-                minAttack /= 2;
-                maxAttack /= 2;
-                if((bodyNode.lhand.ok == false) && (bodyNode.rhand.ok == false))
-                {
-                    minAttack = 0;
-                    maxAttack = 0;
+            Endurance += ((MaxEndurance * EnduranceRegenPercent) / 100);
+            if (Endurance > MaxEndurance)
+                Endurance = MaxEndurance;
+            else if (Endurance < 0)
+                Endurance = 0;
+
+            // Снижение урона 
+            if (!isAdmin)
+                if ((bodyNode.lhand.ok == false) || (bodyNode.rhand.ok == false)) // При отсутствии одной из рук
+                { 
+                    minAttack /= 2;
+                    maxAttack /= 2;
+                    if((bodyNode.lhand.ok == false) && (bodyNode.rhand.ok == false))// При отсутствии обеих рук
+                    {
+                        minAttack = 0;
+                        maxAttack = 0;
+                    }
                 }
-            }
+
+            // Если здоровье положительное
             if (Health > 0)
             {
                 if (ok)
                 {
-                    Console.WriteLine($"Регенерация здоровья: {MaxHealth * HealthRegenPercent} ед.");
+                    Console.WriteLine($"{DateTime.Now.ToString()} : {this.MainName} | Регенерация здоровья: {MaxHealth * HealthRegenPercent} ед.");
                     bodyNode.DistributeHealth(MaxHealth * HealthRegenPercent);
                     Health = bodyNode.SumStatus;
                     if (Health > MaxHealth)
                         Health = MaxHealth;
-
                     Armor = bodyNode.SumArmor;
                 }
                 else
-                    Kill();
+                {
+                    if (isAdmin)
+                        return;
+                    else
+                        Kill();
+                }
             }
             else
-                Kill();
+            {
+                if (isAdmin)
+                    return;
+                else
+                    Kill();
+            }
         }
         /// <summary>
         /// Показать всю информацию информацию
@@ -202,17 +225,24 @@ namespace MainConsole.NPS
             bodyNode.ShowDetals();
             Console.WriteLine("___________________________________");
         }
+
         public override string ToString()
         {
             return (
-                $"\n{MainName} ({Level} ур.) {XP} xp.\n" +
-                $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}% / 100%)\n" +           
-                $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}% / 100%)\n" +
-                $"Защита:\t{Armor}\n" +
-                $"Атака:\t{minAttack} - {maxAttack}\n" +            
-                $"Раса:\t{this.GetType()}\n" +
-                $"Регенерация здоровья:\t{HealthRegenPercent * MaxHealth} (за ход) / {HealthRegenPercent * 100} %\n" +
-                $"Регенерация выносливости:\t{EnduranceRegenPercent * MaxEndurance} (за ход) / {EnduranceRegenPercent * 100} %\n");
+                    $"\n{MainName} ({Level} ур.) {XP} xp.\n" +
+                    $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +
+                    $"Защита:\t{Armor}\n" +
+                    $"Атака:\t{minAttack} - {maxAttack}\n");
+
+            //return (
+            //    $"\n{MainName} ({Level} ур.) {XP} xp.\n" +
+            //    $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +           
+            //    $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
+            //    $"Защита:\t{Armor}\n" +
+            //    $"Атака:\t{minAttack} - {maxAttack}\n" +            
+            //    $"Раса:\t{this.GetType()}\n" +
+            //    $"Рег. здоровья:\t{HealthRegenPercent * MaxHealth} (за ход) / {HealthRegenPercent * 100} %\n" +
+            //    $"Рег. выносливости:\t{EnduranceRegenPercent * MaxEndurance} (за ход) / {EnduranceRegenPercent * 100} %\n");
         }
     }
 }

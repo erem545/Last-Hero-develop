@@ -20,8 +20,8 @@ namespace MainConsole.NPS
         {
             EnduranceRegenPercent = 0.01f;
             HealthRegenPercent = 0.006f;
-            minAttack = 0;
-            maxAttack = 0;
+            minAttack = 3;
+            maxAttack = 6;
         }
     }
 }

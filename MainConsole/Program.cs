@@ -11,8 +11,9 @@ namespace MainConsole
     {
         static void Main(string[] args)
         {
-            Ogre c1 = new Ogre("Бугай",200, 30, true);
-            GUI.Action(c1);
+            Ogre c1 = new Ogre("Бугай", 200, 30, false);
+            Human c2 = new Human("Рыцарь", 170, 50, false);
+            BattleClass.CreateBattle(c1,c2);
         }
     }
 }

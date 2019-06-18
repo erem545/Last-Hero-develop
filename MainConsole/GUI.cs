@@ -14,10 +14,7 @@ namespace MainConsole
             {
                 Console.Clear();
                 Console.WriteLine(character.ToString());
-
                 Console.WriteLine(Des);
-
-
                 int TopPrev = Console.CursorTop;
 
                 //Описание переменных
@@ -95,7 +92,7 @@ namespace MainConsole
                 if (character.isAdmin)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"\"Z\" - получить 10 урона \"X\" - восстановить 10 здоровья \"C\" - ...");
+                    Console.WriteLine($"\"Z\" - получить 20 урона \"X\" - восстановить 10 здоровья \"C\" - ...");
 
 
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -126,11 +123,11 @@ namespace MainConsole
 
                     case ConsoleKey.Z:
                         Console.WriteLine($"Получить урон");
-                        character.ToDamage(10);
+                        character.ToDamage(20);
                         break;
                     case ConsoleKey.X:
                         Console.WriteLine($"Восстановитть здоровье");
-                        character.ToHeal(10);
+                        character.ToHeal(20);
                         break;
                     case ConsoleKey.C:
                         Console.WriteLine($"...");

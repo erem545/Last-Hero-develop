@@ -13,7 +13,7 @@ namespace MainConsole
         internal float Status; // Состояние
         internal float MaxStatus; // Макс. Состояние
         float          PercentStatus { get { return Status * 100 / MaxStatus; } }
-        float          multiplayDamage; // Мультипликатор урона
+        internal float multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
         internal bool  ok; // Наличие
         internal float RezisitArmor = 0.02f; // Сопротивление урону от брони
@@ -53,7 +53,7 @@ namespace MainConsole
                     Status += value;
                 else
                     Status = MaxStatus;
-                Console.WriteLine($"Лечение на {(value)} единиц {ToString()}");
+                //Console.WriteLine($"Лечение на {(value)} единиц {ToString()}");
             }
             else
                 Console.WriteLine($"Отсутствие части тела: {ToString()}");
@@ -72,7 +72,7 @@ namespace MainConsole
                 Status += ( (value * multiplayDamage) * (1 - (RezisitArmor * Armor)) ) * -1;
                 if (Status < 0)
                     Status = 0;
-                Console.WriteLine($"{((value * multiplayDamage) * (1 - (RezisitArmor * Armor)))}({value}) урона по {ToString()}");
+                //Console.WriteLine($"{((value * multiplayDamage) * (1 - (RezisitArmor * Armor)))}({value}) урона по {ToString()}");
                 if (Status < 1)
                 {
                     ok = false;
@@ -134,7 +134,13 @@ namespace MainConsole
                     break;
             }
         }
-
+        internal float RandomDamage(float min, float max)
+        {
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            float value = rnd.Next((int)min, (int)max);
+            Damage(value);
+            return value;
+        }
         public override string ToString()
         {
             Refresh();
@@ -180,6 +186,10 @@ namespace MainConsole
             MaxSumStatus = body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
         }
 
+        /// <summary>
+        /// Распределительное лечение
+        /// </summary>
+        /// <param name="value">Значение лечения</param>
         public void DistributeHealth(float value)
         {
             //lfoot.Status += value * lfoot.multiplayOut;
@@ -191,6 +201,10 @@ namespace MainConsole
             rfoot.Heal(value * rfoot.multiplayOut);
             Refresh();
         }
+        /// <summary>
+        /// Распределительный дамаг
+        /// </summary>
+        /// <param name="value">Значение урона</param>
         public void DistributedDamage(float value)
         {
             //lfoot.Status -= value * lfoot.multiplayOut;
@@ -209,27 +223,23 @@ namespace MainConsole
         {
             ok = false;
             body.ok = false;
+            body.Armor = 0;
             head.ok = false;
+            head.Armor = 0;
             lhand.ok = false;
+            lhand.Armor = 0;
             rhand.ok = false;
+            rhand.Armor = 0;
             lfoot.ok = false;
+            lfoot.Armor = 0;
             rfoot.ok = false;
+            rfoot.Armor = 0;
             body.Refresh();
             head.Refresh();
             lhand.Refresh();
             rhand.Refresh();
             lfoot.Refresh();
             rfoot.Refresh();
-        }
-
-        /// <summary>
-        /// Случайный урон (НЕТ связи с характеристиками)
-        /// </summary>
-        /// <returns></returns>
-        float RandomDamage(float min, float max)
-        {
-            Random rnd = new Random(DateTime.Now.Millisecond);
-            return rnd.Next((int)min, (int)max);
         }
 
         /// <summary>
@@ -286,12 +296,12 @@ namespace MainConsole
         internal void ShowDetals()
         {
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write($"\nТорс:  "); Console.Write($"\t{body.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {body.Armor}");
-              Console.Write($"Голова:"); Console.Write($"\t{head.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {head.Armor}");
-              Console.Write($"Л.Рука:"); Console.Write($"\t{lhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {lhand.Armor}");
-              Console.Write($"П.Рука:"); Console.Write($"\t{rhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {rhand.Armor}");
-              Console.Write($"Л.Нога:"); Console.Write($"\t{lfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {lfoot.Armor}");
-              Console.Write($"П.Нога:"); Console.Write($"\t{rfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($" \tБроня: {rfoot.Armor}");
+            Console.Write($"\nТорс:  "); Console.Write($"\t{body.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {body.Armor}");
+              Console.Write($"Голова:"); Console.Write($"\t{head.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {head.Armor}");
+              Console.Write($"Л.Рука:"); Console.Write($"\t{lhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lhand.Armor}");
+              Console.Write($"П.Рука:"); Console.Write($"\t{rhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rhand.Armor}");
+              Console.Write($"Л.Нога:"); Console.Write($"\t{lfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lfoot.Armor}");
+              Console.Write($"П.Нога:"); Console.Write($"\t{rfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rfoot.Armor}");
             Console.ForegroundColor = ConsoleColor.Gray;
         }
         public override string ToString()
