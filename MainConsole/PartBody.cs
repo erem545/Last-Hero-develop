@@ -12,7 +12,7 @@ namespace MainConsole
         internal float Armor; // Броня
         internal float Status; // Состояние
         internal float MaxStatus; // Макс. Состояние
-        float          PercentStatus { get { return Status * 100 / MaxStatus; } }
+        internal float PercentStatus { get { return Status * 100 / MaxStatus; } }
         internal float multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
         internal bool  ok; // Наличие
@@ -48,7 +48,7 @@ namespace MainConsole
         {
             Console.ForegroundColor = ConsoleColor.Gray;
             if (ok)
-            {               
+            {
                 if (Status + value < MaxStatus)
                     Status += value;
                 else
@@ -56,7 +56,9 @@ namespace MainConsole
                 //Console.WriteLine($"Лечение на {(value)} единиц {ToString()}");
             }
             else
-                Console.WriteLine($"Отсутствие части тела: {ToString()}");
+            {
+                //Console.WriteLine($"Отсутствие части тела: {ToString()}");
+            }
             Refresh();
         }
 
@@ -72,11 +74,11 @@ namespace MainConsole
                 Status += ( (value * multiplayDamage) * (1 - (RezisitArmor * Armor)) ) * -1;
                 if (Status < 0)
                     Status = 0;
-                //Console.WriteLine($"{((value * multiplayDamage) * (1 - (RezisitArmor * Armor)))}({value}) урона по {ToString()}");
+                Console.WriteLine($"{DateTime.Now.ToString()} | {((value * multiplayDamage) * (1 - (RezisitArmor * Armor)))}({value}) урона по {ToString()}");
                 if (Status < 1)
                 {
                     ok = false;
-                    Console.WriteLine($"Уничтожено {ToString()}");
+                    Console.WriteLine($"{DateTime.Now.ToString()} | Уничтожено {ToString()}");
                 }
             }
             Refresh();
@@ -134,6 +136,12 @@ namespace MainConsole
                     break;
             }
         }
+        /// <summary>
+        /// Нанести урон в промежутке от min до max
+        /// </summary>
+        /// <param name="min">Минимально допустимый предел урона</param>
+        /// <param name="max">Максимально допустимый предел урона</param>
+        /// <returns></returns>
         internal float RandomDamage(float min, float max)
         {
             Random rnd = new Random(DateTime.Now.Millisecond);

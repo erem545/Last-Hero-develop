@@ -34,8 +34,8 @@ namespace MainConsole.NPS
         internal float     maxAttack; // Макс. Атака
 
         // Другое
-        float               Level; // Уровень
-        int                 XP; // Опыт
+        int                Level; // Уровень
+        int                XP; // Опыт
         
         public PartBodyNode bodyNode; // Узел для частей тела
 
@@ -54,7 +54,7 @@ namespace MainConsole.NPS
         public Character(string _name, float _maxHealth, float _maxEndurance, bool isAdm)
         {  
             Level = 1;
-            XP = 0;
+            XP = 1;
             MainName = _name;
             MaxHealth = _maxHealth;
             Health = _maxHealth;
@@ -81,12 +81,16 @@ namespace MainConsole.NPS
         {
             if ((ok) && (person.ok))
             {
-                Console.Write($"{DateTime.Now.ToString()} : {this.MainName} | {MainName} нанес {node.RandomDamage(this.minAttack, this.maxAttack) * node.multiplayDamage} урона по {node.Name} {person.MainName}\n");
+                node.RandomDamage(this.minAttack, this.maxAttack);
+                Console.Write($"{DateTime.Now.ToString()} | {MainName} нанес урон по {node.Name} {person.MainName}\n");
                 Refresh();
                 person.Refresh();
                 // Убийство противника
                 if (person.ok == false)
-                    Console.Write($"{MainName} прикончил {person.MainName} | {XP += 20} xp");
+                {
+                    XP += ((person.Level + 1) * 10);
+                    Console.Write($"{DateTime.Now.ToString()} | {MainName} прикончил {person.MainName}. Получено опыта: {(person.Level + 1) * 10} xp");
+                }
             }
         }
         /// <summary>
@@ -190,7 +194,7 @@ namespace MainConsole.NPS
             {
                 if (ok)
                 {
-                    Console.WriteLine($"{DateTime.Now.ToString()} : {this.MainName} | Регенерация здоровья: {MaxHealth * HealthRegenPercent} ед.");
+                    // Console.WriteLine($"{DateTime.Now.ToString()} : {this.MainName} | Регенерация здоровья: {MaxHealth * HealthRegenPercent} ед.");
                     bodyNode.DistributeHealth(MaxHealth * HealthRegenPercent);
                     Health = bodyNode.SumStatus;
                     if (Health > MaxHealth)
@@ -231,6 +235,7 @@ namespace MainConsole.NPS
             return (
                     $"\n{MainName} ({Level} ур.) {XP} xp.\n" +
                     $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +
+                    $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
                     $"Защита:\t{Armor}\n" +
                     $"Атака:\t{minAttack} - {maxAttack}\n");
 
