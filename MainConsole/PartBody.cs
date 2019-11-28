@@ -8,8 +8,16 @@ namespace MainConsole
 {
     class PartBody
     {
+
+
         public string  Name; // Название 
-        internal float Armor; // Броня
+        internal float ArmorValue 
+        {
+            get { return armorValue; }
+            private set { armorValue = armorSet.agilityValue; }
+        
+        } // Броня
+        private float armorValue;
         internal float Status; // Состояние
         internal float MaxStatus; // Макс. Состояние
         internal float PercentStatus { get { return Status * 100 / MaxStatus; } }
@@ -17,6 +25,7 @@ namespace MainConsole
         internal float multiplayOut; // Мультипликатор части тела
         internal bool  ok; // Наличие
         internal float RezisitArmor = 0.02f; // Сопротивление урону от брони
+        internal Armor armorSet;
         public PartBody()
         {
 
@@ -38,6 +47,7 @@ namespace MainConsole
             CreateMultyplay();
             MaxStatus = _maxStatus * multiplayOut;
             Status = _maxStatus * multiplayOut;
+            armorSet = new Armor();
         }
 
         /// <summary>
@@ -71,10 +81,10 @@ namespace MainConsole
             Console.ForegroundColor = ConsoleColor.Gray;
             if (ok)
             {
-                Status += ( (value * multiplayDamage) * (1 - (RezisitArmor * Armor)) ) * -1;
+                Status += ( (value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue)) ) * -1;
                 if (Status < 0)
                     Status = 0;
-                Console.WriteLine($"{DateTime.Now.ToString()} | {((value * multiplayDamage) * (1 - (RezisitArmor * Armor)))}({value}) урона по {ToString()}");
+                Console.WriteLine($"{DateTime.Now.ToString()} | {((value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue)))}({value}) урона по {ToString()}");
                 if (Status < 1)
                 {
                     ok = false;
@@ -107,32 +117,26 @@ namespace MainConsole
                 case "Body":
                     multiplayDamage = 1.0f;
                     multiplayOut = 0.42f;
-                    Armor = 5;
                     break;
                 case "Head":
                     multiplayDamage = 2.0f;
                     multiplayOut = 0.16f;
-                    Armor = 3;
                     break;
                 case "Left Hand":
                     multiplayDamage = 1.3f;
                     multiplayOut = 0.105f;
-                    Armor = 2;
                     break;
                 case "Right Hand":
                     multiplayDamage = 1.3f;
                     multiplayOut = 0.105f;
-                    Armor = 2;
                     break;
                 case "Left Foot":
                     multiplayDamage = 1.4f;
                     multiplayOut = 0.105f;
-                    Armor = 2;
                     break;
                 case "Right Foot":
                     multiplayDamage = 1.4f;
                     multiplayOut = 0.105f;
-                    Armor = 2;
                     break;
             }
         }
@@ -169,7 +173,7 @@ namespace MainConsole
     {
         public float MaxSumStatus;
         public float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
-        public float SumArmor { get { return body.Armor + head.Armor + lhand.Armor + rhand.Armor + lfoot.Armor + rfoot.Armor; } }
+        public float SumArmor { get { return body.ArmorValue + head.ArmorValue + lhand.ArmorValue + rhand.ArmorValue + lfoot.ArmorValue + rfoot.ArmorValue; } }
 
         public PartBody body;
         public PartBody head;
@@ -231,17 +235,11 @@ namespace MainConsole
         {
             ok = false;
             body.ok = false;
-            body.Armor = 0;
             head.ok = false;
-            head.Armor = 0;
             lhand.ok = false;
-            lhand.Armor = 0;
             rhand.ok = false;
-            rhand.Armor = 0;
             lfoot.ok = false;
-            lfoot.Armor = 0;
             rfoot.ok = false;
-            rfoot.Armor = 0;
             body.Refresh();
             head.Refresh();
             lhand.Refresh();
@@ -304,12 +302,12 @@ namespace MainConsole
         internal void ShowDetals()
         {
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write($"\nТорс:  "); Console.Write($"\t{body.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {body.Armor}");
-              Console.Write($"Голова:"); Console.Write($"\t{head.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {head.Armor}");
-              Console.Write($"Л.Рука:"); Console.Write($"\t{lhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lhand.Armor}");
-              Console.Write($"П.Рука:"); Console.Write($"\t{rhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rhand.Armor}");
-              Console.Write($"Л.Нога:"); Console.Write($"\t{lfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lfoot.Armor}");
-              Console.Write($"П.Нога:"); Console.Write($"\t{rfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rfoot.Armor}");
+            Console.Write($"\nТорс:  "); Console.Write($"\t{body.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {body.armorSet.ToString()} " + ArmorValue);
+              Console.Write($"Голова:"); Console.Write($"\t{head.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {head.armorSet.ToString()} " + ArmorValue);
+              Console.Write($"Л.Рука:"); Console.Write($"\t{lhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lhand.armorSet.ToString()} " + ArmorValue);
+              Console.Write($"П.Рука:"); Console.Write($"\t{rhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rhand.armorSet.ToString()} " + ArmorValue);
+              Console.Write($"Л.Нога:"); Console.Write($"\t{lfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lfoot.armorSet.ToString()} " + ArmorValue);
+              Console.Write($"П.Нога:"); Console.Write($"\t{rfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rfoot.armorSet.ToString()} " + ArmorValue);
             Console.ForegroundColor = ConsoleColor.Gray;
         }
         public override string ToString()

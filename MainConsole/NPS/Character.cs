@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BankLibrary;
 
 namespace MainConsole.NPS
 {
@@ -12,6 +11,14 @@ namespace MainConsole.NPS
         public bool         isAdmin; // Является админом
         internal bool       ok; // Существование
         public string       MainName; // Наименование
+
+        // Характеристики
+        internal int Strength;
+        internal int Agility;
+        internal int Communication;
+        internal int Intelligance;
+        internal int Karma;
+        internal int Leadership;
 
         // Выносливость
         protected float     MaxEndurance; // Макс. выносливость
@@ -26,18 +33,21 @@ namespace MainConsole.NPS
         protected float     HealthRegenPercent;// Реген. Здоровья
 
         // Защита
-        float               Armor; // Общая защита
+        float               ArmorValue; // Общая защита
 
         // Атака
         float Attack { get { return (minAttack + maxAttack) / 2; } }// Атака
-        internal float     minAttack; // Мин. Атака
-        internal float     maxAttack; // Макс. Атака
+        internal float minAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.minDamage; } } // Мин. Атака
+        internal float maxAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.maxDamage; } } // Макс. Атака
 
         // Другое
         int                Level; // Уровень
         int                XP; // Опыт
+        internal Weapon weaponNode;
         
         public PartBodyNode bodyNode; // Узел для частей тела
+
+
 
         public Character()
         {
@@ -50,6 +60,14 @@ namespace MainConsole.NPS
             Endurance = 0;
             MaxEndurance = 0;
             EnduranceRegenPercent = 0;
+            weaponNode = null;
+
+            Strength = 0;
+            Agility = 0;
+            Communication = 0;
+            Intelligance = 0;
+            Karma = 0;
+            Leadership = 0;
         }
         public Character(string _name, float _maxHealth, float _maxEndurance, bool isAdm)
         {  
@@ -61,12 +79,24 @@ namespace MainConsole.NPS
             HealthRegenPercent = 5;
             ok = true;
             bodyNode = new PartBodyNode(_maxHealth);
-            Armor = bodyNode.SumArmor;
+            ArmorValue = bodyNode.SumArmor;
             Endurance = _maxEndurance;
             MaxEndurance = _maxEndurance;
             EnduranceRegenPercent = 5;
             isAdmin = isAdm;
+            weaponNode = null;
+
+
         }
+
+        internal void ToTake(Item _item)
+        {
+            if (_item is Weapon)
+            {
+                weaponNode = _item as Weapon;
+            }
+        }
+         
         /// <summary>
         /// Атаковать противника person
         /// </summary>
@@ -79,6 +109,7 @@ namespace MainConsole.NPS
 
         internal void ToAttack(Character person, PartBody node)
         {
+            
             if ((ok) && (person.ok))
             {
                 node.RandomDamage(this.minAttack, this.maxAttack);
@@ -156,7 +187,7 @@ namespace MainConsole.NPS
             Endurance = 0;
             HealthRegenPercent = 0;
             EnduranceRegenPercent = 0;
-            Armor = 0;
+            ArmorValue = 0;
         }
         /// <summary>
         /// Обновить данные
@@ -176,19 +207,6 @@ namespace MainConsole.NPS
             else if (Endurance < 0)
                 Endurance = 0;
 
-            // Снижение урона 
-            if (!isAdmin)
-                if ((bodyNode.lhand.ok == false) || (bodyNode.rhand.ok == false)) // При отсутствии одной из рук
-                { 
-                    minAttack /= 2;
-                    maxAttack /= 2;
-                    if((bodyNode.lhand.ok == false) && (bodyNode.rhand.ok == false))// При отсутствии обеих рук
-                    {
-                        minAttack = 0;
-                        maxAttack = 0;
-                    }
-                }
-
             // Если здоровье положительное
             if (Health > 0)
             {
@@ -199,7 +217,7 @@ namespace MainConsole.NPS
                     Health = bodyNode.SumStatus;
                     if (Health > MaxHealth)
                         Health = MaxHealth;
-                    Armor = bodyNode.SumArmor;
+                    ArmorValue = bodyNode.SumArmor;
                 }
                 else
                 {
@@ -233,11 +251,19 @@ namespace MainConsole.NPS
         public override string ToString()
         {
             return (
-                    $"\n{MainName} ({Level} ур.) {XP} xp.\n" +
+                    $"\nОбщее:\n" +
+                    $"{MainName} ({Level} ур.) {XP} xp.\n" +
                     $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +
                     $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
-                    $"Защита:\t{Armor}\n" +
-                    $"Атака:\t{minAttack} - {maxAttack}\n");
+                    $"Защита:\t{ArmorValue}\n" +
+                    $"Атака:\t{minAttack} - {maxAttack}\n" +
+                    $"Оружие:\t{weaponNode.ToString()}\n" +
+                    $" | Характеристики:\n" +
+                    $" | Сила:\t{Strength}\n" +
+                    $" | Ловкость:\t{Agility}\n" +
+                    $" | Интеллект:\t{Intelligance}\n" +
+                    $" | Лидерство:\t{Leadership}\n" +
+                    $" | Карма:\t{Karma}\n");
 
             //return (
             //    $"\n{MainName} ({Level} ур.) {XP} xp.\n" +
