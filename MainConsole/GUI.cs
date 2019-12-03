@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 namespace MainConsole
 {
     class GUI
-    {
-        public static int ShowMenu(Character character, string Des, params string[] Enter)
+    {     
+        public static int ShowMenu(params string[] Enter)
         {
+            
             {
-                Console.Clear();
-                Console.WriteLine(character.ToString());
-                Console.WriteLine(Des);
-                int TopPrev = Console.CursorTop;
+                int TopPrev = Console.CursorTop - 1;
 
                 //Описание переменных
                 int IndCur = 0, IndPerv = 0, i;

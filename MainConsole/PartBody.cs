@@ -7,8 +7,7 @@ using System.Threading;
 namespace MainConsole
 {
     class PartBody
-    {
-
+    { 
 
         public string  Name; // Название 
         internal float ArmorValue 
@@ -174,6 +173,43 @@ namespace MainConsole
         public float MaxSumStatus;
         public float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
         public float SumArmor { get { return body.ArmorValue + head.ArmorValue + lhand.ArmorValue + rhand.ArmorValue + lfoot.ArmorValue + rfoot.ArmorValue; } }
+        public int SumStrength { 
+            get 
+            { return 
+                    body.armorSet.strengthValue  + 
+                    head.armorSet.strengthValue  + 
+                    lhand.armorSet.strengthValue + 
+                    rhand.armorSet.strengthValue + 
+                    lfoot.armorSet.strengthValue + 
+                    rfoot.armorSet.strengthValue; 
+            } 
+        }
+        public int SumAgility
+        {
+            get
+            {
+                return
+                      body.armorSet.agilityValue +
+                      head.armorSet.agilityValue +
+                      lhand.armorSet.agilityValue +
+                      rhand.armorSet.agilityValue +
+                      lfoot.armorSet.agilityValue +
+                      rfoot.armorSet.agilityValue;
+            }
+        }
+        public int SumIntelligance
+        {
+            get
+            {
+                return
+                      body.armorSet.intelliganceValue +
+                      head.armorSet.intelliganceValue +
+                      lhand.armorSet.intelliganceValue +
+                      rhand.armorSet.intelliganceValue +
+                      lfoot.armorSet.intelliganceValue +
+                      rfoot.armorSet.intelliganceValue;
+            }
+        }
 
         public PartBody body;
         public PartBody head;
@@ -198,6 +234,30 @@ namespace MainConsole
             MaxSumStatus = body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
         }
 
+        public void WearArmor(Armor armor)
+        {
+            switch (armor.type)
+            {
+                case "Голова":
+                    head.armorSet = armor;
+                    break;
+                case "Торс":
+                    body.armorSet = armor;
+                    break;
+                case "Л.Рука":
+                    lhand.armorSet = armor;
+                    break;
+                case "П.Рука":
+                    rhand.armorSet = armor;
+                    break;
+                case "Л.Нога":
+                    lfoot.armorSet = armor;
+                    break;
+                case "П.Нога":
+                    rfoot.armorSet = armor;
+                    break;
+            }
+        }
         /// <summary>
         /// Распределительное лечение
         /// </summary>

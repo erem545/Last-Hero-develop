@@ -8,32 +8,51 @@ namespace MainConsole.NPS
 {
     class Character 
     {
+
+
         public bool         isAdmin; // Является админом
         internal bool       ok; // Существование
         public string       MainName; // Наименование
 
         // Характеристики
-        internal int Strength;
-        internal int Agility;
+        internal int Strength
+        { 
+
+            get { if (bodyNode == null) return 0; return strength + bodyNode.SumStrength; }
+            set { strength = value; }
+        }
+        int strength; // Сила
+        internal int Agility
+        {
+            get { if (bodyNode == null) return 0; return agility + bodyNode.SumAgility; }
+            set { agility = value; }
+        }
+        int agility; // Ловкость    
+        internal int Intelligance
+        {
+            get { if (bodyNode == null) return 0; return intelligance + bodyNode.SumIntelligance; }
+            set { intelligance = value; }
+        }
+        int intelligance; // Интеллект
+
         internal int Communication;
-        internal int Intelligance;
         internal int Karma;
         internal int Leadership;
 
         // Выносливость
-        protected float     MaxEndurance; // Макс. выносливость
-        float               Endurance; // Выносливость
-        internal float      PercentEndurance { get { return Endurance * 100 / MaxEndurance; } }
+        internal float MaxEndurance; // Макс. выносливость
+        internal float Endurance; // Выносливость
+        internal float      PercentEndurance { get { return Endurance * 100 / MaxEndurance; } } // Процент от максимального запаса
         protected float     EnduranceRegenPercent; // Реген. выносливости
-
         // Здоровье
-        protected float     MaxHealth; // Макс. Здоровье
-        float               Health; // Здоровье
-        internal  float     PercentHealth { get { return Health * 100 / MaxHealth; } }
-        protected float     HealthRegenPercent;// Реген. Здоровья
+        internal float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } } // Макс. Здоровье
+        float maxHealthValue;
+        internal float Health; // Здоровье      
+        internal  float     PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
+        internal float     HealthRegenPercent;// Реген. Здоровья
 
         // Защита
-        float               ArmorValue; // Общая защита
+        internal float ArmorValue; // Общая защита
 
         // Атака
         float Attack { get { return (minAttack + maxAttack) / 2; } }// Атака
@@ -41,8 +60,8 @@ namespace MainConsole.NPS
         internal float maxAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.maxDamage; } } // Макс. Атака
 
         // Другое
-        int                Level; // Уровень
-        int                XP; // Опыт
+        internal int Level; // Уровень
+        internal int XP; // Опыт
         internal Weapon weaponNode;
         
         public PartBodyNode bodyNode; // Узел для частей тела
@@ -51,9 +70,10 @@ namespace MainConsole.NPS
 
         public Character()
         {
+            CreateStartСharacteristics();
             MainName = null;
             MaxHealth = 0;
-            Health = 0;
+            Health = MaxHealth;
             HealthRegenPercent = 0;
             Level = 0;
             XP = 0;
@@ -61,32 +81,35 @@ namespace MainConsole.NPS
             MaxEndurance = 0;
             EnduranceRegenPercent = 0;
             weaponNode = null;
-
             Strength = 0;
             Agility = 0;
-            Communication = 0;
             Intelligance = 0;
-            Karma = 0;
             Leadership = 0;
+            Karma = 0;
+
         }
-        public Character(string _name, float _maxHealth, float _maxEndurance, bool isAdm)
-        {  
+        public Character(string _name, float _health, float _maxEndurance, bool isAdm, int s, int a, int i)
+        {
+            Strength = s;
+            Agility = a;
+            Intelligance = i;
+            Leadership = 0;
+            Karma = 0;
             Level = 1;
             XP = 1;
             MainName = _name;
-            MaxHealth = _maxHealth;
-            Health = _maxHealth;
+
             HealthRegenPercent = 5;
             ok = true;
-            bodyNode = new PartBodyNode(_maxHealth);
+            bodyNode = new PartBodyNode(_health);
             ArmorValue = bodyNode.SumArmor;
             Endurance = _maxEndurance;
             MaxEndurance = _maxEndurance;
             EnduranceRegenPercent = 5;
             isAdmin = isAdm;
             weaponNode = null;
-
-
+            MaxHealth = _health;
+            Health = MaxHealth;
         }
 
         internal void ToTake(Item _item)
@@ -97,6 +120,10 @@ namespace MainConsole.NPS
             }
         }
          
+        public void DisplayMessage(string str)
+        {
+            Console.WriteLine(str);
+        }
         /// <summary>
         /// Атаковать противника person
         /// </summary>
@@ -113,14 +140,14 @@ namespace MainConsole.NPS
             if ((ok) && (person.ok))
             {
                 node.RandomDamage(this.minAttack, this.maxAttack);
-                Console.Write($"{DateTime.Now.ToString()} | {MainName} нанес урон по {node.Name} {person.MainName}\n");
+                //Console.WriteLine($"{DateTime.Now.ToString()} | {MainName} нанес урон по {node.Name} {person.MainName}\n");
                 Refresh();
                 person.Refresh();
                 // Убийство противника
                 if (person.ok == false)
                 {
                     XP += ((person.Level + 1) * 10);
-                    Console.Write($"{DateTime.Now.ToString()} | {MainName} прикончил {person.MainName}. Получено опыта: {(person.Level + 1) * 10} xp");
+                    //Console.WriteLine($"{DateTime.Now.ToString()} | {MainName} прикончил {person.MainName}. Получено опыта: {(person.Level + 1) * 10} xp");
                 }
             }
         }
@@ -130,7 +157,7 @@ namespace MainConsole.NPS
         /// <param name="value">Значение</param>
         internal void ToDamage(float value)
         {
-            Console.WriteLine($"Получен урон: {value} ед.");
+            //Console.WriteLine($"Получен урон: {value} ед.");
             if (ok)
             {
                 if (value > Health)
@@ -145,12 +172,13 @@ namespace MainConsole.NPS
         /// <param name="value">Значение</param>
         internal void ToHeal(float value)
         {
-            Console.WriteLine($"Восстановление здоровья: {value} ед.");
+            //Console.WriteLine($"Восстановление здоровья: {value} ед.");
             if (ok)
             {
                 bodyNode.DistributeHealth(value);
                 Refresh();
             }
+
         }
         /// <summary>
         /// Защищаться от атаки person (Увеличение сопротивления урона за ед. защиты)
@@ -189,6 +217,26 @@ namespace MainConsole.NPS
             EnduranceRegenPercent = 0;
             ArmorValue = 0;
         }
+        
+        private void CreateStartСharacteristics(int s, int a, int i, int c, int k, int l) 
+        {
+            Strength = s;
+            Agility = a;
+            Intelligance = i;
+            Communication = c;
+            Karma = k;
+            Leadership = l;
+        }
+        private void CreateStartСharacteristics()
+        {
+            Strength = 1;
+            Agility = 1;
+            Intelligance = 1;
+            Communication = 0;
+            Karma = 0;
+            Leadership = 0;
+        }
+
         /// <summary>
         /// Обновить данные
         /// </summary>

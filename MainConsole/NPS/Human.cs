@@ -13,8 +13,8 @@ namespace MainConsole.NPS
             EnduranceRegenPercent = 0;
             HealthRegenPercent = 0;
         }
-        public Human(string _name, float _maxHealth, float _maxEndurance, bool isAdm) :
-            base(_name, _maxHealth, _maxEndurance, isAdm)
+        public Human(string _name, float _maxHealth, float _maxEndurance, bool isAdm, int s, int a, int i) :
+            base(_name, _maxHealth, _maxEndurance, isAdm, s, a, i)
         {
             EnduranceRegenPercent = 0.01f;
             HealthRegenPercent = 0.006f;

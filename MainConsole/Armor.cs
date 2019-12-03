@@ -8,9 +8,10 @@ namespace MainConsole
 {
     class Armor : Item
     {
-        internal float strengthValue;
-        internal float agilityValue;
-        internal float intelliganceValue;
+        internal int strengthValue;
+        internal int agilityValue;
+        internal int intelliganceValue;
+
         internal string type;
         public Armor() : base()
         {
@@ -37,7 +38,7 @@ namespace MainConsole
             type = "Пусто";
         }
 
-        public Armor(string _name, int _quality, int _level, int _state, float _strengthValue, float _agilityValue, float _intelliganceValue, string _type) : base(_name, _quality, _level, _state)
+        public Armor(string _name, int _quality, int _level, int _state, int _strengthValue, int _agilityValue, int _intelliganceValue, string _type) : base(_name, _quality, _level, _state)
         {
             Name = _name;
             Quality = _quality;

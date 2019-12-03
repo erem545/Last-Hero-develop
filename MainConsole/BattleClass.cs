@@ -47,8 +47,10 @@ namespace MainConsole.NPS
         {
             do
             {
-                
-                switch (GUI.ShowMenu(c1, c2.ToString(),
+                Console.Clear();
+                TextFactory.TwoCharacterInfo(c1, c2);
+                Console.WriteLine();
+                switch (GUI.ShowMenu(
                     $"Голова  \t {c2.bodyNode.head.Status} ({c2.bodyNode.head.PercentStatus}%)  ",
                     $"Тело    \t {c2.bodyNode.body.Status} ({c2.bodyNode.body.PercentStatus}%)  ",
                     $"Л. Рука \t {c2.bodyNode.lhand.Status} ({c2.bodyNode.lhand.PercentStatus}%)",
@@ -74,7 +76,7 @@ namespace MainConsole.NPS
                     case 6:
                         c1.ToAttack(c2, c2.bodyNode.rfoot);
                         break;
-                }
+                }               
                 Console.WriteLine("Ход " + c2.MainName);
                 AttackEnemy(c2,c1);
                 Console.ReadKey();
