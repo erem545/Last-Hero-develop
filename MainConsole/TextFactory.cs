@@ -140,15 +140,30 @@ namespace MainConsole
             #endregion
             return MainInformation;
         }
+        /// <summary>
+        /// Информация о предмете записывается в рваный массив символов
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public static char[][] ItemInfo(Item item)
+        {
+            char[][] MainInformation = new char[3][];
+            #region
+            MainInformation[0] = ConvertText.ConvertStringToArraryChar($"Предмет:");
+            MainInformation[1] = ConvertText.ConvertStringToArraryChar($"{item.Name} {item.Quality} ({item.Level} ур.)");
+            MainInformation[2] = ConvertText.ConvertStringToArraryChar($"Состояние: {item.State}%");
+            #endregion
+            return MainInformation;
+        }
 
         /// <summary>
         /// Информация об игроке (Подробно) записывается в рваный массив символов
         /// </summary>
         /// <param name="player">Игрок</param>
         /// <returns></returns>
-        private static char[][] CharacterAllInfo(NPS.Character player)
+        internal static char[][] CharacterAllInfo(NPS.Character player)
         {
-            char[][] MainInformation = new char[20][];
+            char[][] MainInformation = new char[21][];
             #region
             MainInformation[0] =  ConvertText.ConvertStringToArraryChar($"*** ОБЩАЯ ИНФОРМАЦИЯ ***");
             MainInformation[1] =  ConvertText.ConvertStringToArraryChar($"| {player.MainName} ({player.Level} ур.) {player.XP} xp.");
@@ -161,15 +176,16 @@ namespace MainConsole
             MainInformation[8] =  ConvertText.ConvertStringToArraryChar($"| Сила: {player.Strength}");
             MainInformation[9] =  ConvertText.ConvertStringToArraryChar($"| Ловкость: {player.Agility}");
             MainInformation[10] = ConvertText.ConvertStringToArraryChar($"| Интеллект: {player.Intelligance}");
-            MainInformation[11] = ConvertText.ConvertStringToArraryChar($"| Лидерство: {player.Leadership}");
-            MainInformation[12] = ConvertText.ConvertStringToArraryChar($"| Карма: {player.Karma}");
-            MainInformation[13] = ConvertText.ConvertStringToArraryChar($"| ( ЧАСТИ ТЕЛА )");
-            MainInformation[14] = ConvertText.ConvertStringToArraryChar($"# Торс: {player.bodyNode.body.ToString()}");
-            MainInformation[15] = ConvertText.ConvertStringToArraryChar($"# Голова: {player.bodyNode.head.ToString()}");
-            MainInformation[16] = ConvertText.ConvertStringToArraryChar($"# Л.Рука: {player.bodyNode.lhand.ToString()}");
-            MainInformation[17] = ConvertText.ConvertStringToArraryChar($"# П.Рука: {player.bodyNode.rhand.ToString()}");
-            MainInformation[18] = ConvertText.ConvertStringToArraryChar($"# Л.Нога: {player.bodyNode.lfoot.ToString()}");
-            MainInformation[19] = ConvertText.ConvertStringToArraryChar($"# П.Нога: {player.bodyNode.rfoot.ToString()}");
+            MainInformation[11] = ConvertText.ConvertStringToArraryChar($"| Точность: {player.Accuaracy}%");
+            MainInformation[12] = ConvertText.ConvertStringToArraryChar($"| Лидерство: {player.Leadership}");
+            MainInformation[13] = ConvertText.ConvertStringToArraryChar($"| Карма: {player.Karma}");
+            MainInformation[14] = ConvertText.ConvertStringToArraryChar($"| ( ЧАСТИ ТЕЛА )");
+            MainInformation[15] = ConvertText.ConvertStringToArraryChar($"# Торс: {player.bodyNode.body.ToString()}");
+            MainInformation[16] = ConvertText.ConvertStringToArraryChar($"# Голова: {player.bodyNode.head.ToString()}");
+            MainInformation[17] = ConvertText.ConvertStringToArraryChar($"# Л.Рука: {player.bodyNode.lhand.ToString()}");
+            MainInformation[18] = ConvertText.ConvertStringToArraryChar($"# П.Рука: {player.bodyNode.rhand.ToString()}");
+            MainInformation[19] = ConvertText.ConvertStringToArraryChar($"# Л.Нога: {player.bodyNode.lfoot.ToString()}");
+            MainInformation[20] = ConvertText.ConvertStringToArraryChar($"# П.Нога: {player.bodyNode.rfoot.ToString()}");
             #endregion
             return MainInformation;
         }
@@ -254,7 +270,7 @@ namespace MainConsole
         /// Изобразить данные из одного рваного массива символов
         /// </summary>
         /// <param name="arr1"></param>
-        private static void PrintOneArray(char[][] arr1)
+        public static void PrintOneArray(char[][] arr1)
         {
             StringBuilder sb = new StringBuilder();
 

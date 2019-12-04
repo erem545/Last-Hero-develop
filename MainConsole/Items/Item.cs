@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MainConsole
 {
+    [Serializable]
     class Item
     {
         internal string Name;

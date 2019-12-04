@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MainConsole.NPS.Human">
+    <Position X="6.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Human.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainConsole.NPS.Ogre">
+    <Position X="10.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Ogre.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainConsole.NPS.Character" Collapsed="true">
+    <Position X="8.25" Y="5" Width="1.5" />
+    <Members>
+      <Field Name="agility" Hidden="true" />
+      <Property Name="ArmorValue" Hidden="true" />
+      <Field Name="bodyNode" Hidden="true" />
+      <Field Name="intelligance" Hidden="true" />
+      <Field Name="isAdmin" Hidden="true" />
+      <Field Name="maxEnduranceValue" Hidden="true" />
+      <Field Name="maxHealthValue" Hidden="true" />
+      <Field Name="ok" Hidden="true" />
+      <Property Name="PercentEndurance" Hidden="true" />
+      <Property Name="PercentHealth" Hidden="true" />
+      <Field Name="strength" Hidden="true" />
+      <Field Name="weaponNode" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>EAACKAAAAUBECCIVCAIAZYIAAQBgAGgRQAIAIAIAAzA=</HashCode>
+      <FileName>Character.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainConsole.PartBody" Collapsed="true">
+    <Position X="12.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAACEAABACACEQAEAAAQAAAAIAYAQEAAAEAAAAQE=</HashCode>
+      <FileName>PartBody.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainConsole.PartBodyNode" Collapsed="true">
+    <Position X="10.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQBAAIgAAAABAEQAAIAQACIQEAAABAAAAACkAABAA=</HashCode>
+      <FileName>PartBody.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainConsole.NPS.BattleClass" Collapsed="true">
+    <Position X="4.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>BattleClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainConsole.Bot">
+    <Position X="8.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Bot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

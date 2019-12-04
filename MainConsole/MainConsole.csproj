@@ -46,13 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="BattleClass.cs" />
     <Compile Include="Items\Item.cs" />
-    <Compile Include="NPS\Character.cs" />
+    <Compile Include="Character.cs" />
     <Compile Include="GUI.cs" />
-    <Compile Include="NPS\Human.cs" />
-    <Compile Include="NPS\Ogre.cs" />
+    <Compile Include="Human.cs" />
+    <Compile Include="Ogre.cs" />
+    <Compile Include="ObjectStorage.cs" />
     <Compile Include="PartBody.cs" />
     <Compile Include="ProbabilityClass.cs" />
     <Compile Include="Program.cs" />
@@ -62,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

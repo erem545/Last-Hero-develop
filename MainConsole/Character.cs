@@ -6,68 +6,63 @@ using System.Threading.Tasks;
 
 namespace MainConsole.NPS
 {
-    class Character 
+    public class Character
     {
-
-
-        public bool         isAdmin; // Является админом
-        internal bool       ok; // Существование
-        public string       MainName; // Наименование
+        public bool isAdmin; // Является админом
+        public bool ok; // Существование
+        public string MainName; // Наименование
 
         // Характеристики
-        internal int Strength
-        { 
-
+        public int Strength
+        {
             get { if (bodyNode == null) return 0; return strength + bodyNode.SumStrength; }
             set { strength = value; }
         }
         int strength; // Сила
-        internal int Agility
+        public int Agility
         {
             get { if (bodyNode == null) return 0; return agility + bodyNode.SumAgility; }
             set { agility = value; }
         }
         int agility; // Ловкость    
-        internal int Intelligance
+        public int Intelligance
         {
             get { if (bodyNode == null) return 0; return intelligance + bodyNode.SumIntelligance; }
             set { intelligance = value; }
         }
         int intelligance; // Интеллект
 
-        internal int Communication;
-        internal int Karma;
-        internal int Leadership;
-        internal int Accuaracy;
+        public int Communication;
+        public int Karma;
+        public int Leadership;
+        public float Accuaracy { get { return Agility * 0.2f; } }
 
         // Выносливость
-        internal float MaxEndurance; // Макс. выносливость
+        public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxHealthValue = value; } } // Макс. выносливость
+        float maxEnduranceValue;
         internal float Endurance; // Выносливость
-        internal float      PercentEndurance { get { return Endurance * 100 / MaxEndurance; } } // Процент от максимального запаса
-        protected float     EnduranceRegenPercent; // Реген. выносливости
+        internal float PercentEndurance { get { return Endurance * 100 / MaxEndurance; } } // Процент от максимального запаса
+
         // Здоровье
-        internal float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } } // Макс. Здоровье
+        public float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } } // Макс. Здоровье
         float maxHealthValue;
         internal float Health; // Здоровье      
-        internal  float     PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
-        internal float     HealthRegenPercent;// Реген. Здоровья
+        internal  float PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
+        internal float HealthRegenPercent { get { return ((MaxHealth / Strength) * 0.05f); } } // Реген. Здоровья
 
         // Защита
         internal float ArmorValue { get { return bodyNode.ArmorValue + Agility * 0.2f; } } // Общая защита
 
         // Атака
-        float Attack { get { return (minAttack + maxAttack) / 2; } }// Атака
+        float AverageAttack { get { return (minAttack + maxAttack) / 2; } }// Атака
         internal float minAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.minDamage; } } // Мин. Атака
         internal float maxAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.maxDamage; } } // Макс. Атака
 
         // Другое
-        internal int Level; // Уровень
-        internal int XP; // Опыт
+        public int Level; // Уровень
+        public int XP; // Опыт
         internal Weapon weaponNode;
-        
-        public PartBodyNode bodyNode; // Узел для частей тела
-
-
+        internal PartBodyNode bodyNode; // Узел для частей тела
 
         public Character()
         {
@@ -75,22 +70,19 @@ namespace MainConsole.NPS
             MainName = null;
             MaxHealth = 0;
             Health = MaxHealth;
-            HealthRegenPercent = 0;
             Level = 0;
             XP = 0;
             Endurance = 0;
             MaxEndurance = 0;
-            EnduranceRegenPercent = 0;
             weaponNode = null;
             Strength = 0;
             Agility = 0;
             Intelligance = 0;
             Leadership = 0;
             Karma = 0;
-            Accuaracy = 0;
 
         }
-        public Character(string _name, float _health, float _maxEndurance, bool isAdm, int s, int a, int i)
+        public Character(string _name, float _health, float _maxEndurance, int s, int a, int i)
         {
             Strength = s;
             Agility = a;
@@ -100,18 +92,13 @@ namespace MainConsole.NPS
             Level = 1;
             XP = 1;
             MainName = _name;
-
-            HealthRegenPercent = 5;
             ok = true;
             bodyNode = new PartBodyNode(_health);
             Endurance = _maxEndurance;
             MaxEndurance = _maxEndurance;
-            EnduranceRegenPercent = 5;
-            isAdmin = isAdm;
             weaponNode = null;
             MaxHealth = _health;
             Health = MaxHealth;
-            Accuaracy = 10;
         }
 
         internal void ToTake(Item _item)
@@ -213,8 +200,6 @@ namespace MainConsole.NPS
             XP = 0;
             bodyNode.Dead();
             Endurance = 0;
-            HealthRegenPercent = 0;
-            EnduranceRegenPercent = 0;
         }
         
         private void CreateStartСharacteristics(int s, int a, int i, int c, int k, int l) 
@@ -248,7 +233,6 @@ namespace MainConsole.NPS
                 if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
                     Kill();
 
-            Endurance += ((MaxEndurance * EnduranceRegenPercent) / 100);
             if (Endurance > MaxEndurance)
                 Endurance = MaxEndurance;
             else if (Endurance < 0)
