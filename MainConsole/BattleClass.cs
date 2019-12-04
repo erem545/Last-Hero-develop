@@ -17,31 +17,61 @@ namespace MainConsole.NPS
         private static void AttackEnemy(Character c1, Character c2)
         {
             Random rnd = new Random(DateTime.Now.Millisecond);
-            switch (rnd.Next(1, 6 + 1))
+            switch (rnd.Next(1, 7))
             {
                 case 1:
-                    Console.Write($"{DateTime.Now.ToString()} | Удар в голову " + c2.MainName);
-                    c1.ToAttack(c2, c2.bodyNode.head);
+                    if (ProbabilityClass.ChanceToHit(c1, 20))
+                    {
+                        Console.Write($"{DateTime.Now.ToString()} | Удар в голову " + c2.MainName);
+                        c1.ToAttack(c2, c2.bodyNode.head);
+                    }
+                    else
+                        Console.WriteLine("Промах!");
                     break;
                 case 2:
-                    Console.Write($"{DateTime.Now.ToString()} | Удар в тело " + c2.MainName);
-                    c1.ToAttack(c2, c2.bodyNode.body);
+                    if (ProbabilityClass.ChanceToHit(c1, 50))
+                    {
+                        Console.Write($"{DateTime.Now.ToString()} | Удар в тело " + c2.MainName);
+                        c1.ToAttack(c2, c2.bodyNode.body);
+                    }
+                    else
+                        Console.WriteLine("Промах!");
                     break;
                 case 3:
-                    Console.Write($"{DateTime.Now.ToString()} | Удар по левой руке " + c2.MainName);
-                    c1.ToAttack(c2, c2.bodyNode.lhand);
+                    if (ProbabilityClass.ChanceToHit(c1, 30))
+                    {
+                        Console.Write($"{DateTime.Now.ToString()} | Удар по левой руке " + c2.MainName);
+                        c1.ToAttack(c2, c2.bodyNode.lhand);
+                    }
+                    else
+                        Console.WriteLine("Промах!");
                     break;
                 case 4:
-                    Console.Write($"{DateTime.Now.ToString()} | Удар по правой руке " + c2.MainName);
-                    c1.ToAttack(c2, c2.bodyNode.rhand);
+                    if (ProbabilityClass.ChanceToHit(c1, 30))
+                    {
+                        Console.Write($"{DateTime.Now.ToString()} | Удар по правой руке " + c2.MainName);
+                        c1.ToAttack(c2, c2.bodyNode.rhand);
+                    }
+                    else
+                        Console.WriteLine("Промах!");
                     break;
                 case 5:
-                    Console.Write($"{DateTime.Now.ToString()} | Удар по левой ноге " + c2.MainName);
-                    c1.ToAttack(c2, c2.bodyNode.lfoot);
+                    if (ProbabilityClass.ChanceToHit(c1, 30))
+                    {
+                        Console.Write($"{DateTime.Now.ToString()} | Удар по левой ноге " + c2.MainName);
+                        c1.ToAttack(c2, c2.bodyNode.lfoot);
+                    }
+                    else
+                        Console.WriteLine("Промах!");
                     break;
                 case 6:
-                    Console.Write($"{DateTime.Now.ToString()} | Удар по правой ноге " + c2.MainName);
-                    c1.ToAttack(c2, c2.bodyNode.rfoot);
+                    if (ProbabilityClass.ChanceToHit(c1, 30))
+                    {
+                        Console.Write($"{DateTime.Now.ToString()} | Удар по правой ноге " + c2.MainName);
+                        c1.ToAttack(c2, c2.bodyNode.rfoot);
+                    }
+                    else
+                        Console.WriteLine("Промах!");
                     break;
             }
         }
@@ -58,36 +88,66 @@ namespace MainConsole.NPS
                 TextFactory.TwoCharacterInfo(c1, c2);
                 Console.WriteLine();
                 switch (GUI.ShowMenu(
-                    $"Голова  :: {Math.Round(c2.bodyNode.head.Status)}  ({ Math.Round(c2.bodyNode.head.PercentStatus )}%) (Точность {(c1.Accuaracy * 20)/10}%) ",
-                    $"Тело    :: {Math.Round(c2.bodyNode.body.Status)}  ({ Math.Round(c2.bodyNode.body.PercentStatus )}%) (Точность {(c1.Accuaracy * 50)/10}%) ",
+                    $"Голова  :: {Math.Round(c2.bodyNode.head.Status)}  ({ Math.Round(c2.bodyNode.head.PercentStatus )}%) (Точность {(c1.Accuaracy * 20)/10}%)",
+                    $"Тело    :: {Math.Round(c2.bodyNode.body.Status)}  ({ Math.Round(c2.bodyNode.body.PercentStatus )}%) (Точность {(c1.Accuaracy * 50)/10}%)",
                     $"Л. Рука :: {Math.Round(c2.bodyNode.lhand.Status)}  ({Math.Round(c2.bodyNode.lhand.PercentStatus)}%) (Точность {(c1.Accuaracy * 30)/10}%)",
                     $"П. Рука :: {Math.Round(c2.bodyNode.rhand.Status)}  ({Math.Round(c2.bodyNode.rhand.PercentStatus)}%) (Точность {(c1.Accuaracy * 30)/10}%)",
                     $"Л. Нога :: {Math.Round(c2.bodyNode.lfoot.Status)}  ({Math.Round(c2.bodyNode.lfoot.PercentStatus)}%) (Точность {(c1.Accuaracy * 30)/10}%)",
                     $"П. Нога :: {Math.Round(c2.bodyNode.rfoot.Status)}  ({Math.Round(c2.bodyNode.rfoot.PercentStatus)}%) (Точность {(c1.Accuaracy * 30)/10}%)"))
                 {
                     case 1:
-                        Console.Write($"{DateTime.Now.ToString()} | Удар в голову " + c2.MainName);
-                        c1.ToAttack(c2, c2.bodyNode.head);
+                        if (ProbabilityClass.ChanceToHit(c1, 20))
+                        {
+                            Console.Write($"{DateTime.Now.ToString()} | Удар в голову " + c2.MainName);
+                            c1.ToAttack(c2, c2.bodyNode.head);
+                        }
+                        else
+                            Console.WriteLine("Промах!");
                         break;
-                    case 2:
-                        Console.Write($"{DateTime.Now.ToString()} | Удар в тело " + c2.MainName);
-                        c1.ToAttack(c2, c2.bodyNode.body);
+                    case 2:        
+                        if (ProbabilityClass.ChanceToHit(c1, 50))
+                        {
+                            Console.Write($"{DateTime.Now.ToString()} | Удар в тело " + c2.MainName);
+                            c1.ToAttack(c2, c2.bodyNode.body);
+                        }
+                        else
+                            Console.WriteLine("Промах!");
                         break;
-                    case 3:
-                        Console.Write($"{DateTime.Now.ToString()} | Удар по левой руке " + c2.MainName);
-                        c1.ToAttack(c2, c2.bodyNode.lhand);
+                    case 3:                    
+                        if (ProbabilityClass.ChanceToHit(c1, 30))
+                        {
+                            Console.Write($"{DateTime.Now.ToString()} | Удар по левой руке " + c2.MainName);
+                            c1.ToAttack(c2, c2.bodyNode.lhand);
+                        }
+                        else
+                            Console.WriteLine("Промах!");
                         break;
-                    case 4:
-                        Console.Write($"{DateTime.Now.ToString()} | Удар по правой руке " + c2.MainName);
-                        c1.ToAttack(c2, c2.bodyNode.rhand);
+                    case 4:                     
+                        if (ProbabilityClass.ChanceToHit(c1, 30))
+                        {
+                            Console.Write($"{DateTime.Now.ToString()} | Удар по правой руке " + c2.MainName);
+                            c1.ToAttack(c2, c2.bodyNode.rhand);
+                        }
+                        else
+                            Console.WriteLine("Промах!");
                         break;
-                    case 5:
-                        Console.Write($"{DateTime.Now.ToString()} | Удар по левой ноге " + c2.MainName);
-                        c1.ToAttack(c2, c2.bodyNode.lfoot);
+                    case 5:                        
+                        if (ProbabilityClass.ChanceToHit(c1, 30))
+                        {
+                            Console.Write($"{DateTime.Now.ToString()} | Удар по левой ноге " + c2.MainName);
+                            c1.ToAttack(c2, c2.bodyNode.lfoot);
+                        }
+                        else
+                            Console.WriteLine("Промах!");
                         break;
-                    case 6:
-                        Console.Write($"{DateTime.Now.ToString()} | Удар по правой ноге " + c2.MainName);
-                        c1.ToAttack(c2, c2.bodyNode.rfoot);
+                    case 6:                     
+                        if (ProbabilityClass.ChanceToHit(c1, 30))
+                        {
+                            Console.Write($"{DateTime.Now.ToString()} | Удар по правой ноге " + c2.MainName);
+                            c1.ToAttack(c2, c2.bodyNode.rfoot);
+                        }
+                        else
+                            Console.WriteLine("Промах!");
                         break;
                 }
                 Thread.Sleep(1000);

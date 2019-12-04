@@ -141,7 +141,6 @@ namespace MainConsole.NPS
             if ((ok) && (person.ok))
             {
                 node.RandomDamage(this.minAttack, this.maxAttack);
-                Console.WriteLine($"Нанес урон по {node.Name} {person.MainName} ");
                 Refresh();
                 person.Refresh();
                 // Убийство противника

@@ -10,14 +10,13 @@ namespace MainConsole
     class GUI
     {     
         public static int ShowMenu(params string[] Enter)
-        {
-            
+        {           
             {
                 int TopPrev = Console.CursorTop - 1;
 
                 //Описание переменных
                 int IndCur = 0, IndPerv = 0, i;
-                int posX = 0, posY = Console.CursorTop;
+                int posX = 39, posY = Console.CursorTop;
                 bool itemSelected = false;
 
                 // Пункты меню
@@ -40,14 +39,13 @@ namespace MainConsole
                     Console.CursorTop = posY + IndPerv;
                     Console.ForegroundColor = ConsoleColor.Gray;
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.Write(selected[IndPerv]);
+                    Console.Write(selected[IndPerv]+"  ");
 
                     // Активный пункт меню
                     Console.CursorLeft = posX;
                     Console.CursorTop = posY + IndCur;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.BackgroundColor = ConsoleColor.Gray;
-                    Console.Write(selected[IndCur]);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("->" + selected[IndCur]);
 
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
