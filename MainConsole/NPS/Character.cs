@@ -38,6 +38,7 @@ namespace MainConsole.NPS
         internal int Communication;
         internal int Karma;
         internal int Leadership;
+        internal int Accuaracy;
 
         // Выносливость
         internal float MaxEndurance; // Макс. выносливость
@@ -52,7 +53,7 @@ namespace MainConsole.NPS
         internal float     HealthRegenPercent;// Реген. Здоровья
 
         // Защита
-        internal float ArmorValue; // Общая защита
+        internal float ArmorValue { get { return bodyNode.ArmorValue + Agility * 0.2f; } } // Общая защита
 
         // Атака
         float Attack { get { return (minAttack + maxAttack) / 2; } }// Атака
@@ -86,6 +87,7 @@ namespace MainConsole.NPS
             Intelligance = 0;
             Leadership = 0;
             Karma = 0;
+            Accuaracy = 0;
 
         }
         public Character(string _name, float _health, float _maxEndurance, bool isAdm, int s, int a, int i)
@@ -102,7 +104,6 @@ namespace MainConsole.NPS
             HealthRegenPercent = 5;
             ok = true;
             bodyNode = new PartBodyNode(_health);
-            ArmorValue = bodyNode.SumArmor;
             Endurance = _maxEndurance;
             MaxEndurance = _maxEndurance;
             EnduranceRegenPercent = 5;
@@ -110,6 +111,7 @@ namespace MainConsole.NPS
             weaponNode = null;
             MaxHealth = _health;
             Health = MaxHealth;
+            Accuaracy = 10;
         }
 
         internal void ToTake(Item _item)
@@ -135,19 +137,18 @@ namespace MainConsole.NPS
         }
 
         internal void ToAttack(Character person, PartBody node)
-        {
-            
+        {           
             if ((ok) && (person.ok))
             {
                 node.RandomDamage(this.minAttack, this.maxAttack);
-                //Console.WriteLine($"{DateTime.Now.ToString()} | {MainName} нанес урон по {node.Name} {person.MainName}\n");
+                Console.WriteLine($"Нанес урон по {node.Name} {person.MainName} ");
                 Refresh();
                 person.Refresh();
                 // Убийство противника
                 if (person.ok == false)
                 {
                     XP += ((person.Level + 1) * 10);
-                    //Console.WriteLine($"{DateTime.Now.ToString()} | {MainName} прикончил {person.MainName}. Получено опыта: {(person.Level + 1) * 10} xp");
+                    Console.WriteLine($"{DateTime.Now.ToString()} | {MainName} прикончил {person.MainName}. Получено опыта: {(person.Level + 1) * 10} xp");
                 }
             }
         }
@@ -215,7 +216,6 @@ namespace MainConsole.NPS
             Endurance = 0;
             HealthRegenPercent = 0;
             EnduranceRegenPercent = 0;
-            ArmorValue = 0;
         }
         
         private void CreateStartСharacteristics(int s, int a, int i, int c, int k, int l) 
@@ -265,7 +265,6 @@ namespace MainConsole.NPS
                     Health = bodyNode.SumStatus;
                     if (Health > MaxHealth)
                         Health = MaxHealth;
-                    ArmorValue = bodyNode.SumArmor;
                 }
                 else
                 {

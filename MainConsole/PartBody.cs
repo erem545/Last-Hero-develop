@@ -22,6 +22,7 @@ namespace MainConsole
         internal float PercentStatus { get { return Status * 100 / MaxStatus; } }
         internal float multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
+        internal float missChance; // МУльтипликатор уворота
         internal bool  ok; // Наличие
         internal float RezisitArmor = 0.02f; // Сопротивление урону от брони
         internal Armor armorSet;
@@ -77,13 +78,12 @@ namespace MainConsole
         /// <param Name="stat"></param>
         internal void Damage(float value)
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
             if (ok)
             {
                 Status += ( (value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue)) ) * -1;
                 if (Status < 0)
                     Status = 0;
-                Console.WriteLine($"{DateTime.Now.ToString()} | {((value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue)))}({value}) урона по {ToString()}");
+                Console.WriteLine($" {((value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue)))}({value}) урона по {ToString()}");
                 if (Status < 1)
                 {
                     ok = false;
@@ -155,17 +155,17 @@ namespace MainConsole
         public override string ToString()
         {
             Refresh();
-            if (PercentStatus <= 30)
-                Console.ForegroundColor = ConsoleColor.Red;
+            //if (PercentStatus <= 30)
+            //    Console.ForegroundColor = ConsoleColor.Red;
 
-            if ( (PercentStatus > 30) && (PercentStatus < 75) )
-                Console.ForegroundColor = ConsoleColor.Yellow;
+            //if ( (PercentStatus > 30) && (PercentStatus < 75) )
+            //    Console.ForegroundColor = ConsoleColor.Yellow;
 
-            if (PercentStatus >= 75)
-                Console.ForegroundColor = ConsoleColor.Green;
+            //if (PercentStatus >= 75)
+            //    Console.ForegroundColor = ConsoleColor.Green;
 
-            return $"{Name} ({Status} / {MaxStatus})";
-            //return $"{Name} ({Math.Round(PercentStatus)}% / 100%) ";
+            //return $"{Name} ({Status} / {MaxStatus})";
+            return $"{Name} ({Math.Round(PercentStatus)}% / 100%) ";
         }
     }
     class PartBodyNode : PartBody
