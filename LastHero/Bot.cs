@@ -12,7 +12,7 @@ namespace LastHero
         {
             MainName = null;
             MaxHealth = 0;
-            Health = MaxHealth;
+            Health = 0;
             Level = 0;
             XP = 0;
             Endurance = 0;
@@ -25,7 +25,7 @@ namespace LastHero
         {
             MainName = _name;
             MaxHealth = _health;
-            Health = MaxHealth;
+            Health = _health;
             Level = 1;
             XP = 1;
             Endurance = _endurance;

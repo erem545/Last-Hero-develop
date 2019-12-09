@@ -37,23 +37,25 @@ namespace LastHero
         public int Communication;
         public int Karma;
         public int Leadership;
+
+        // Точность
         public float Accuaracy { get { return Agility * 0.2f; } }
 
         // Выносливость
-        public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxHealthValue = value; } } // Макс. выносливость
+        public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxEnduranceValue = value; } } // Макс. выносливость
         float maxEnduranceValue;
-        public float Endurance; // Выносливость
+        internal float Endurance; // Выносливость
         internal float PercentEndurance { get { return Endurance * 100 / MaxEndurance; } } // Процент от максимального запаса
 
         // Здоровье
         public float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } } // Макс. Здоровье
         float maxHealthValue;
-        public float Health; // Здоровье      
+        internal float Health; // Здоровье      
         internal float PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
         internal float HealthRegenPercent { get { return ((MaxHealth / Strength) * 0.05f); } } // Реген. Здоровья
 
         // Защита
-        internal float ArmorValue { get { return bodyNode.ArmorValue + Agility * 0.2f; } } // Общая защита
+        internal float ArmorValue { get { return Agility * 0.2f; } } // Общая защита
 
         // Атака
         float AverageAttack { get { return (minAttack + maxAttack) / 2; } }// Атака
@@ -222,19 +224,23 @@ namespace LastHero
                 Kill();
             }
         }
-    }
 
-    class SerializationClass
-    {
-        public static void Ser(Character person)
+        public override string ToString()
         {
-            XmlSerializer formatter = new XmlSerializer(typeof(Character));
-
-            // получаем поток, куда будем записывать сериализованный объект
-            using (FileStream fs = new FileStream("persons.xml", FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, person);
-            }
+            return (
+                    $"\nОбщее:\n" +
+                    $"{MainName} ({Level} ур.) {XP} xp.\n" +
+                    $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +
+                    $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
+                    $"Защита:\t{ArmorValue}\n" +
+                    $"Атака:\t{minAttack} - {maxAttack}\n" +
+                    $"Оружие:\t{weaponNode.ToString()}\n" +
+                    $" | Характеристики:\n" +
+                    $" | Сила:\t{Strength}\n" +
+                    $" | Ловкость:\t{Agility}\n" +
+                    $" | Интеллект:\t{Intelligance}\n" +
+                    $" | Лидерство:\t{Leadership}\n" +
+                    $" | Карма:\t{Karma}\n");
+        }
         }
     }
-}
