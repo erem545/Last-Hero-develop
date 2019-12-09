@@ -17,19 +17,19 @@ namespace LastHero
         // Характеристики
         public int Strength
         {
-            get { if (bodyNode == null) return 0; return strength + bodyNode.SumStrength; }
+            get { if (bodyNode == null) return 0; return strength; }
             set { strength = value; }
         }
         int strength; // Сила
         public int Agility
         {
-            get { if (bodyNode == null) return 0; return agility + bodyNode.SumAgility; }
+            get { if (bodyNode == null) return 0; return agility; }
             set { agility = value; }
         }
         int agility; // Ловкость    
         public int Intelligance
         {
-            get { if (bodyNode == null) return 0; return intelligance + bodyNode.SumIntelligance; }
+            get { if (bodyNode == null) return 0; return intelligance; }
             set { intelligance = value; }
         }
         int intelligance; // Интеллект
@@ -70,7 +70,6 @@ namespace LastHero
 
         public Character()
         {
-            CreateStartСharacteristics();
             MainName = null;
             MaxHealth = 0;
             Health = MaxHealth;
@@ -102,7 +101,7 @@ namespace LastHero
             MaxEndurance = _maxEndurance;
             weaponNode = null;
             MaxHealth = _health;
-            Health = MaxHealth;
+            Health = _health;
         }
 
         internal void ToTake(Item _item)
@@ -169,23 +168,15 @@ namespace LastHero
             Endurance = 0;
         }
 
-        private void CreateStartСharacteristics(int s, int a, int i, int c, int k, int l)
+        public void UpdateAllValues()
         {
-            Strength = s;
-            Agility = a;
-            Intelligance = i;
-            Communication = c;
-            Karma = k;
-            Leadership = l;
-        }
-        private void CreateStartСharacteristics()
-        {
-            Strength = 1;
-            Agility = 1;
-            Intelligance = 1;
-            Communication = 0;
-            Karma = 0;
-            Leadership = 0;
+            bodyNode = new PartBodyNode();
+            Endurance = MaxEndurance;
+            Health = MaxHealth;
+            Strength = strength;
+            Agility = agility;
+            Intelligance = intelligance;
+            
         }
 
         /// <summary>

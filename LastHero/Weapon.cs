@@ -42,7 +42,7 @@ namespace LastHero
             if (this == null)
                 return "";
             return (
-                $"{Name} ({Level} ур., {Quality}*) {minDamage} - {maxDamage}"
+                $"{Name} ({Level}-lvl {Quality}*) {minDamage} - {maxDamage}"
                 );
 
         }

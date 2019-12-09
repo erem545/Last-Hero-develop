@@ -34,6 +34,7 @@ namespace LastHero
                 try
                 {
                     Character newPerson = (Character)formatter.Deserialize(fs);
+                    newPerson.UpdateAllValues();
                     Console.WriteLine("Объект десериализован");
                     Console.WriteLine(newPerson.ToString());
                 }
