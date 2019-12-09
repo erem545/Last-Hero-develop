@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace MainConsole
+namespace LastHero
 {
+    [Serializable]
     class Weapon : Item
     {
 
@@ -44,7 +44,7 @@ namespace MainConsole
             return (
                 $"{Name} ({Level} ур., {Quality}*) {minDamage} - {maxDamage}"
                 );
-            
+
         }
     }
 }
