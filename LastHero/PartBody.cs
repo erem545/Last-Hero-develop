@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
-namespace MainConsole
+namespace LastHero
 {
     class PartBody
-    { 
+    {
 
-        public string  Name; // Название 
-        internal float ArmorValue 
+        public string Name; // Название 
+        internal float ArmorValue
         {
             get { return armorValue; }
             private set { armorValue = armorSet.agilityValue; }
-        
+
         } // Броня
         private float armorValue;
         internal float Status; // Состояние
@@ -23,7 +22,7 @@ namespace MainConsole
         internal float multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
         internal float missChance; // МУльтипликатор уворота
-        internal bool  ok; // Наличие
+        internal bool ok; // Наличие
         internal float RezisitArmor = 0.02f; // Сопротивление урону от брони
         internal Armor armorSet;
         public PartBody()
@@ -80,14 +79,12 @@ namespace MainConsole
         {
             if (ok)
             {
-                Status += ( (value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue)) ) * -1;
+                Status += ((value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue))) * -1;
                 if (Status < 0)
                     Status = 0;
-                Console.WriteLine($" {((value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue)))}({value}) урона по {ToString()}");
                 if (Status < 1)
                 {
                     ok = false;
-                    Console.WriteLine($"{DateTime.Now.ToString()} | Уничтожено {ToString()}");
                 }
             }
             Refresh();
@@ -103,7 +100,7 @@ namespace MainConsole
                 Status = 0;
             else
                 if (Status > MaxStatus)
-                Status = MaxStatus;            
+                Status = MaxStatus;
         }
 
         /// <summary>
@@ -152,37 +149,24 @@ namespace MainConsole
             Damage(value);
             return value;
         }
-        public override string ToString()
-        {
-            Refresh();
-            //if (PercentStatus <= 30)
-            //    Console.ForegroundColor = ConsoleColor.Red;
-
-            //if ( (PercentStatus > 30) && (PercentStatus < 75) )
-            //    Console.ForegroundColor = ConsoleColor.Yellow;
-
-            //if (PercentStatus >= 75)
-            //    Console.ForegroundColor = ConsoleColor.Green;
-
-            //return $"{Name} ({Status} / {MaxStatus})";
-            return $"{Name} ({Math.Round(PercentStatus)}% / 100%) ";
-        }
     }
     class PartBodyNode : PartBody
     {
         public float MaxSumStatus;
         public float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
         public float SumArmor { get { return body.ArmorValue + head.ArmorValue + lhand.ArmorValue + rhand.ArmorValue + lfoot.ArmorValue + rfoot.ArmorValue; } }
-        public int SumStrength { 
-            get 
-            { return 
-                    body.armorSet.strengthValue  + 
-                    head.armorSet.strengthValue  + 
-                    lhand.armorSet.strengthValue + 
-                    rhand.armorSet.strengthValue + 
-                    lfoot.armorSet.strengthValue + 
-                    rfoot.armorSet.strengthValue; 
-            } 
+        public int SumStrength
+        {
+            get
+            {
+                return
+                      body.armorSet.strengthValue +
+                      head.armorSet.strengthValue +
+                      lhand.armorSet.strengthValue +
+                      rhand.armorSet.strengthValue +
+                      lfoot.armorSet.strengthValue +
+                      rfoot.armorSet.strengthValue;
+            }
         }
         public int SumAgility
         {
@@ -217,7 +201,7 @@ namespace MainConsole
         public PartBody rhand;
         public PartBody lfoot;
         public PartBody rfoot;
-        
+
 
         public PartBodyNode()
         {
@@ -354,25 +338,6 @@ namespace MainConsole
                         AttackToRandomPart(min, max);
                     break;
             }
-        }
-
-        /// <summary>
-        /// Показать все детали
-        /// </summary>
-        internal void ShowDetals()
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write($"\nТорс:  "); Console.Write($"\t{body.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {body.armorSet.ToString()} " + ArmorValue);
-              Console.Write($"Голова:"); Console.Write($"\t{head.ToString() }"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {head.armorSet.ToString()} " + ArmorValue);
-              Console.Write($"Л.Рука:"); Console.Write($"\t{lhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lhand.armorSet.ToString()} " + ArmorValue);
-              Console.Write($"П.Рука:"); Console.Write($"\t{rhand.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rhand.armorSet.ToString()} " + ArmorValue);
-              Console.Write($"Л.Нога:"); Console.Write($"\t{lfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {lfoot.armorSet.ToString()} " + ArmorValue);
-              Console.Write($"П.Нога:"); Console.Write($"\t{rfoot.ToString()}"); Console.ForegroundColor = ConsoleColor.Gray; Console.WriteLine($"\tБроня: {rfoot.armorSet.ToString()} " + ArmorValue);
-            Console.ForegroundColor = ConsoleColor.Gray;
-        }
-        public override string ToString()
-        {
-            return base.ToString();
         }
     }
 }

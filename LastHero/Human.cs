@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace MainConsole.NPS
+
+namespace LastHero
 {
     public class Human : Character
     {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MainConsole
+namespace LastHero
 {
     [Serializable]
-    public class Bot : NPS.Character
+    public class Bot : Character
     {
         public Bot()
         {

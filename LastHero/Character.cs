@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using UnityEditor;
+using System.Xml.Serialization;
+using System.IO;
 
-namespace MainConsole.NPS
+namespace LastHero
 {
+    [Serializable]
     public class Character
     {
-        public bool isAdmin; // Является админом
+        [NonSerialized]
         public bool ok; // Существование
         public string MainName; // Наименование
-
         // Характеристики
         public int Strength
         {
@@ -40,14 +42,14 @@ namespace MainConsole.NPS
         // Выносливость
         public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxHealthValue = value; } } // Макс. выносливость
         float maxEnduranceValue;
-        internal float Endurance; // Выносливость
+        public float Endurance; // Выносливость
         internal float PercentEndurance { get { return Endurance * 100 / MaxEndurance; } } // Процент от максимального запаса
 
         // Здоровье
         public float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } } // Макс. Здоровье
         float maxHealthValue;
-        internal float Health; // Здоровье      
-        internal  float PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
+        public float Health; // Здоровье      
+        internal float PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
         internal float HealthRegenPercent { get { return ((MaxHealth / Strength) * 0.05f); } } // Реген. Здоровья
 
         // Защита
@@ -108,23 +110,10 @@ namespace MainConsole.NPS
                 weaponNode = _item as Weapon;
             }
         }
-         
-        public void DisplayMessage(string str)
-        {
-            Console.WriteLine(str);
-        }
-        /// <summary>
-        /// Атаковать противника person
-        /// </summary>
-        /// <param name="person">Противник</param>
-        internal void ToAttack(Character person)
-        {
-            
 
-        }
 
         internal void ToAttack(Character person, PartBody node)
-        {           
+        {
             if ((ok) && (person.ok))
             {
                 node.RandomDamage(this.minAttack, this.maxAttack);
@@ -134,7 +123,6 @@ namespace MainConsole.NPS
                 if (person.ok == false)
                 {
                     XP += ((person.Level + 1) * 10);
-                    Console.WriteLine($"{DateTime.Now.ToString()} | {MainName} прикончил {person.MainName}. Получено опыта: {(person.Level + 1) * 10} xp");
                 }
             }
         }
@@ -144,7 +132,6 @@ namespace MainConsole.NPS
         /// <param name="value">Значение</param>
         internal void ToDamage(float value)
         {
-            //Console.WriteLine($"Получен урон: {value} ед.");
             if (ok)
             {
                 if (value > Health)
@@ -159,7 +146,6 @@ namespace MainConsole.NPS
         /// <param name="value">Значение</param>
         internal void ToHeal(float value)
         {
-            //Console.WriteLine($"Восстановление здоровья: {value} ед.");
             if (ok)
             {
                 bodyNode.DistributeHealth(value);
@@ -167,33 +153,12 @@ namespace MainConsole.NPS
             }
 
         }
-        /// <summary>
-        /// Защищаться от атаки person (Увеличение сопротивления урона за ед. защиты)
-        /// </summary>
-        /// <param name="person">Нападающий</param>
-        internal void ToDefend(Character person)
-        {
-            if ((ok) && (person.ok))
-            {
-                bodyNode.RezisitArmor = 0.04f;                         
-                person.ToAttack(this);
-                bodyNode.RezisitArmor = 0.02f;
 
-                Refresh();
-                person.Refresh();
-
-                //// Убийство противника
-                //if (ok == false)
-                //    Console.Write($"{MainName} прикончил {person.MainName} | {XP += 20}");           
-            }
-        }
         /// <summary>
         /// Убить персонажа
         /// </summary>
         public void Kill()
         {
-            if (isAdmin)
-                return;
             ok = false;
             Health = 0;
             Level = 0;
@@ -201,8 +166,8 @@ namespace MainConsole.NPS
             bodyNode.Dead();
             Endurance = 0;
         }
-        
-        private void CreateStartСharacteristics(int s, int a, int i, int c, int k, int l) 
+
+        private void CreateStartСharacteristics(int s, int a, int i, int c, int k, int l)
         {
             Strength = s;
             Agility = a;
@@ -229,9 +194,8 @@ namespace MainConsole.NPS
             Console.ForegroundColor = ConsoleColor.Gray;
 
             // Отсутствие головы или тела - мгновенная смерть
-            if (!isAdmin) 
-                if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
-                    Kill();
+            if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
+                Kill();
 
             if (Endurance > MaxEndurance)
                 Endurance = MaxEndurance;
@@ -243,7 +207,6 @@ namespace MainConsole.NPS
             {
                 if (ok)
                 {
-                    // Console.WriteLine($"{DateTime.Now.ToString()} : {this.MainName} | Регенерация здоровья: {MaxHealth * HealthRegenPercent} ед.");
                     bodyNode.DistributeHealth(MaxHealth * HealthRegenPercent);
                     Health = bodyNode.SumStatus;
                     if (Health > MaxHealth)
@@ -251,59 +214,27 @@ namespace MainConsole.NPS
                 }
                 else
                 {
-                    if (isAdmin)
-                        return;
-                    else
-                        Kill();
+                    Kill();
                 }
             }
             else
             {
-                if (isAdmin)
-                    return;
-                else
-                    Kill();
+                Kill();
             }
         }
-        /// <summary>
-        /// Показать всю информацию информацию
-        /// </summary>
-        public void ShowAllInfo()
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("\n___________________________________");
-            Console.WriteLine("               Профиль");
-            Console.WriteLine(ToString());
-            bodyNode.ShowDetals();
-            Console.WriteLine("___________________________________");
-        }
+    }
 
-        public override string ToString()
+    class SerializationClass
+    {
+        public static void Ser(Character person)
         {
-            return (
-                    $"\nОбщее:\n" +
-                    $"{MainName} ({Level} ур.) {XP} xp.\n" +
-                    $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +
-                    $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
-                    $"Защита:\t{ArmorValue}\n" +
-                    $"Атака:\t{minAttack} - {maxAttack}\n" +
-                    $"Оружие:\t{weaponNode.ToString()}\n" +
-                    $" | Характеристики:\n" +
-                    $" | Сила:\t{Strength}\n" +
-                    $" | Ловкость:\t{Agility}\n" +
-                    $" | Интеллект:\t{Intelligance}\n" +
-                    $" | Лидерство:\t{Leadership}\n" +
-                    $" | Карма:\t{Karma}\n");
+            XmlSerializer formatter = new XmlSerializer(typeof(Character));
 
-            //return (
-            //    $"\n{MainName} ({Level} ур.) {XP} xp.\n" +
-            //    $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +           
-            //    $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
-            //    $"Защита:\t{Armor}\n" +
-            //    $"Атака:\t{minAttack} - {maxAttack}\n" +            
-            //    $"Раса:\t{this.GetType()}\n" +
-            //    $"Рег. здоровья:\t{HealthRegenPercent * MaxHealth} (за ход) / {HealthRegenPercent * 100} %\n" +
-            //    $"Рег. выносливости:\t{EnduranceRegenPercent * MaxEndurance} (за ход) / {EnduranceRegenPercent * 100} %\n");
+            // получаем поток, куда будем записывать сериализованный объект
+            using (FileStream fs = new FileStream("persons.xml", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, person);
+            }
         }
     }
 }
