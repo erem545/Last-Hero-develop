@@ -11,8 +11,9 @@ namespace LastHero
     {
         public static void SerializationCharacter(Character person)
         {
+            Directory.CreateDirectory(@".\ProjectData\XML\");
             XmlSerializer formatter = new XmlSerializer(typeof(Character));
-            using (FileStream fs = new FileStream($"{person.MainName}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@".\ProjectData\XML\{person.MainName}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {

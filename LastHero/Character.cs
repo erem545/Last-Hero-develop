@@ -11,54 +11,46 @@ namespace LastHero
     [Serializable]
     public class Character
     {
-        [NonSerialized]
-        public bool ok; // Существование
+        internal bool ok; // Существование
         public string MainName; // Наименование
+
         // Характеристики
         public int Strength
         {
             get { if (bodyNode == null) return 0; return strength; }
             set { strength = value; }
         }
-        int strength; // Сила
         public int Agility
         {
             get { if (bodyNode == null) return 0; return agility; }
             set { agility = value; }
         }
-        int agility; // Ловкость    
         public int Intelligance
         {
             get { if (bodyNode == null) return 0; return intelligance; }
             set { intelligance = value; }
         }
+        int strength; // Сила
+        int agility; // Ловкость    
         int intelligance; // Интеллект
 
-        public int Communication;
-        public int Karma;
-        public int Leadership;
+        public int Communication; // Общение
+        public int Karma; // Карма
+        public int Leadership; // Лидерство
 
-        // Точность
-        public float Accuaracy { get { return Agility * 0.2f; } }
+        public float Accuaracy { get { return Agility * 0.2f; } }// Точность
 
-        // Выносливость
-        public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxEnduranceValue = value; } } // Макс. выносливость
-        float maxEnduranceValue;
-        internal float Endurance; // Выносливость
-        internal float PercentEndurance { get { return Endurance * 100 / MaxEndurance; } } // Процент от максимального запаса
+        public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxEnduranceValue = value; } }
+        public float Endurance; // Выносливость
+        float maxEnduranceValue; 
 
-        // Здоровье
-        public float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } } // Макс. Здоровье
+        public float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } }
+        public float Health; // Здоровье    
         float maxHealthValue;
-        internal float Health; // Здоровье      
-        internal float PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
-        internal float HealthRegenPercent { get { return ((MaxHealth / Strength) * 0.05f); } } // Реген. Здоровья
 
-        // Защита
-        internal float ArmorValue { get { return Agility * 0.2f; } } // Общая защита
+        public float ArmorValue { get { return Agility * 0.2f; } } // Общая защита
 
-        // Атака
-        float AverageAttack { get { return (minAttack + maxAttack) / 2; } }// Атака
+        public float AverageAttack { get { return (((minAttack + maxAttack) / 2) + ((agility + strength)*0.01f)); } } // Атака
         internal float minAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.minDamage; } } // Мин. Атака
         internal float maxAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.maxDamage; } } // Макс. Атака
 
@@ -70,20 +62,17 @@ namespace LastHero
 
         public Character()
         {
-            MainName = null;
-            MaxHealth = 0;
-            Health = MaxHealth;
+            MainName = null;          
             Level = 0;
             XP = 0;
-            Endurance = 0;
-            MaxEndurance = 0;
             weaponNode = null;
             Strength = 0;
             Agility = 0;
             Intelligance = 0;
             Leadership = 0;
             Karma = 0;
-
+            Endurance = MaxEndurance = 0;
+            Health = MaxHealth = 0;
         }
         public Character(string _name, float _health, float _maxEndurance, int s, int a, int i)
         {
@@ -97,11 +86,11 @@ namespace LastHero
             MainName = _name;
             ok = true;
             bodyNode = new PartBodyNode(_health);
-            Endurance = _maxEndurance;
-            MaxEndurance = _maxEndurance;
             weaponNode = null;
+            MaxEndurance = _maxEndurance;
+            Endurance = MaxEndurance;
             MaxHealth = _health;
-            Health = _health;
+            Health = MaxHealth;
         }
 
         internal void ToTake(Item _item)
@@ -199,8 +188,7 @@ namespace LastHero
             if (Health > 0)
             {
                 if (ok)
-                {
-                    bodyNode.DistributeHealth(MaxHealth * HealthRegenPercent);
+                {                   
                     Health = bodyNode.SumStatus;
                     if (Health > MaxHealth)
                         Health = MaxHealth;
@@ -221,8 +209,8 @@ namespace LastHero
             return (
                     $"\nОбщее:\n" +
                     $"{MainName} ({Level} ур.) {XP} xp.\n" +
-                    $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +
-                    $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
+                    $"Здоровье:\t{Health} / {MaxHealth} ({(Health * 100 / MaxHealth)}%)\n" +
+                    $"Выносливость:\t{Endurance} / {MaxEndurance} ({(Endurance * 100 / MaxEndurance)}%)\n" +
                     $"Защита:\t{ArmorValue}\n" +
                     $"Атака:\t{minAttack} - {maxAttack}\n" +
                     $"Оружие:\t{weaponNode.ToString()}\n" +
