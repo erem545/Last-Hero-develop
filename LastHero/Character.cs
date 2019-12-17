@@ -11,7 +11,7 @@ namespace LastHero
     [Serializable]
     public class Character
     {
-        internal bool ok; // Существование
+        public bool ok; // Существование
         public string MainName; // Наименование
 
         // Характеристики
@@ -38,27 +38,58 @@ namespace LastHero
         public int Karma; // Карма
         public int Leadership; // Лидерство
 
-        public float Accuaracy { get { return Agility * 0.2f; } }// Точность
+        public float Accuaracy { get { return Agility * 0.2f; } } // Точность
 
-        public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxEnduranceValue = value; } }
-        public float Endurance; // Выносливость
+        public float MaxEndurance { get { return (float)Math.Round(maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f)); } set { maxEnduranceValue = value; } }
+        public float Endurance
+        { 
+            get { if (endurance > MaxEndurance) return MaxEndurance; else return endurance; }
+            set { if (endurance > MaxEndurance) endurance = MaxEndurance; else endurance = value; }
+        } 
+        float endurance; // Выносливость
         float maxEnduranceValue; 
 
         public float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } }
-        public float Health; // Здоровье    
+        public float Health {
+            get 
+            {
+                if (health > MaxHealth)
+                    return MaxHealth;
+                else
+                    return bodyNode.SumStatus;
+            } 
+            set 
+            {
+                if (health > MaxHealth)
+                {
+                    health = MaxHealth;
+                    ok = true;
+                }
+                else if (health < 0)
+                {
+                    health = 0;
+                    ok = false;
+                    Kill();
+                }
+                else health = value;
+            } 
+        }   
+        float health; // Здоровье  
         float maxHealthValue;
 
-        public float ArmorValue { get { return Agility * 0.2f; } } // Общая защита
+        public float ArmorValue { get { return (Agility + Strength) * 0.1f; } } // Общая защита
 
         public float AverageAttack { get { return (((minAttack + maxAttack) / 2) + ((agility + strength)*0.01f)); } } // Атака
-        internal float minAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.minDamage; } } // Мин. Атака
-        internal float maxAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.maxDamage; } } // Макс. Атака
+        internal float minAttack { get { if (weaponNode == null) weaponNode = new Weapon(); return weaponNode.minDamage; } } // Мин. Атака
+        internal float maxAttack { get { if (weaponNode == null) weaponNode = new Weapon(); return weaponNode.maxDamage; } } // Макс. Атака
 
         // Другое
         public int Level; // Уровень
         public int XP; // Опыт
-        internal Weapon weaponNode;
-        internal PartBodyNode bodyNode; // Узел для частей тела
+        [NonSerialized]
+        public Weapon weaponNode;
+        [NonSerialized]
+        public PartBodyNode bodyNode; // Узел для частей тела
 
         public Character()
         {
@@ -67,6 +98,7 @@ namespace LastHero
             XP = 0;
             weaponNode = null;
             Strength = 0;
+            ok = true;
             Agility = 0;
             Intelligance = 0;
             Leadership = 0;
@@ -93,14 +125,37 @@ namespace LastHero
             Health = MaxHealth;
         }
 
-        internal void ToTake(Item _item)
+        public void ToTake(Item _item)
         {
             if (_item is Weapon)
             {
                 weaponNode = _item as Weapon;
             }
+            if (_item is Armor)
+            {
+                switch (_item.type)
+                {
+                    case "Шлем":
+                        bodyNode.head.armorSet = _item as Armor;
+                        break;
+                    case "Броня Туловище":
+                        bodyNode.body.armorSet = _item as Armor;
+                        break;
+                    case "Броня Левая Рука":
+                        bodyNode.lhand.armorSet = _item as Armor;
+                        break;
+                    case "Броня Правая Рука":
+                        bodyNode.rhand.armorSet = _item as Armor;
+                        break;
+                    case "Броня Левая Нога":
+                        bodyNode.lfoot.armorSet = _item as Armor;
+                        break;
+                    case "Броня Правая Нога":
+                        bodyNode.rfoot.armorSet = _item as Armor;
+                        break;
+                }
+            }
         }
-
 
         internal void ToAttack(Character person, PartBody node)
         {
@@ -116,32 +171,29 @@ namespace LastHero
                 }
             }
         }
+
         /// <summary>
         /// Нанести общее повреждение
         /// </summary>
         /// <param name="value">Значение</param>
-        internal void ToDamage(float value)
+        public void ToDamage(float value)
         {
             if (ok)
             {
-                if (value > Health)
-                    Kill();
                 bodyNode.DistributedDamage(value);
-                Refresh();
             }
         }
+
         /// <summary>
         /// Восстановить здоровье распределительно
         /// </summary>
         /// <param name="value">Значение</param>
-        internal void ToHeal(float value)
+        public void ToHeal(float value)
         {
             if (ok)
             {
                 bodyNode.DistributeHealth(value);
-                Refresh();
             }
-
         }
 
         /// <summary>
@@ -173,23 +225,21 @@ namespace LastHero
         /// </summary>
         public void Refresh()
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
 
             // Отсутствие головы или тела - мгновенная смерть
             if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
                 Kill();
-
+                       
             if (Endurance > MaxEndurance)
                 Endurance = MaxEndurance;
-            else if (Endurance < 0)
-                Endurance = 0;
+            else if (Endurance < MaxEndurance)
+                Endurance += agility * 0.001f;
 
-            // Если здоровье положительное
             if (Health > 0)
             {
                 if (ok)
-                {                   
-                    Health = bodyNode.SumStatus;
+                {
+                    ToHeal(Strength * 0.001f);
                     if (Health > MaxHealth)
                         Health = MaxHealth;
                 }
@@ -207,19 +257,15 @@ namespace LastHero
         public override string ToString()
         {
             return (
-                    $"\nОбщее:\n" +
                     $"{MainName} ({Level} ур.) {XP} xp.\n" +
-                    $"Здоровье:\t{Health} / {MaxHealth} ({(Health * 100 / MaxHealth)}%)\n" +
-                    $"Выносливость:\t{Endurance} / {MaxEndurance} ({(Endurance * 100 / MaxEndurance)}%)\n" +
-                    $"Защита:\t{ArmorValue}\n" +
-                    $"Атака:\t{minAttack} - {maxAttack}\n" +
-                    $"Оружие:\t{weaponNode.ToString()}\n" +
-                    $" | Характеристики:\n" +
-                    $" | Сила:\t{Strength}\n" +
-                    $" | Ловкость:\t{Agility}\n" +
-                    $" | Интеллект:\t{Intelligance}\n" +
-                    $" | Лидерство:\t{Leadership}\n" +
-                    $" | Карма:\t{Karma}\n");
+                    $"Здоровье: {MaxHealth - ((Strength * 0.5f) + (Leadership * 1))} + {((Strength * 0.5f) + (Leadership * 1))}\n" +
+                    $"Выносливость: {MaxEndurance - ((Agility * 0.2f) + (Leadership * 0.5f))} + {((Agility * 0.2f) + (Leadership * 0.5f))}\n" +
+                    $"Сила: {Strength}\n" +
+                    $"Ловкость: {Agility}\n" +
+                    $"Интеллект: {Intelligance}\n" +
+                    $"Атака: {AverageAttack}\n" +
+                    $"Защита: {ArmorValue}\n" +
+                    $"Лидерство: {Leadership}\n");
         }
         }
     }

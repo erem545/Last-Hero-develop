@@ -6,12 +6,22 @@ using System.Text;
 namespace LastHero
 {
     [Serializable]
-    class Weapon : Item
+    public class Weapon : Item
     {
+        public float minDamage;
+        public float maxDamage;
+        public string type;
+        public Weapon() : base()
+        {
+            Name = "Кулак";
+            Quality = 0;
+            Level = 1;
+            State = 1;
 
-        internal float minDamage;
-        internal float maxDamage;
-        internal string type;
+            minDamage = 1;
+            maxDamage = 2;
+            type = "Ближний бой";
+        }
 
         public Weapon(string _name, int _quality, int _level, int _state) : base(_name, _quality, _level, _state)
         {
@@ -42,7 +52,7 @@ namespace LastHero
             if (this == null)
                 return "";
             return (
-                $"{Name} ({Level}-lvl {Quality}*) {minDamage} - {maxDamage}"
+                $"{Name}  {Level}lvl  {Quality}*"
                 );
 
         }

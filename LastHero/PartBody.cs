@@ -5,29 +5,35 @@ using System.Text;
 
 namespace LastHero
 {
-    class PartBody
+    public class PartBody
     {
 
         public string Name; // Название 
         internal float ArmorValue
         {
             get { return armorValue; }
-            private set { armorValue = armorSet.agilityValue; }
+            set { armorValue = armorSet.agilityValue; }
 
         } // Броня
         private float armorValue;
-        internal float Status; // Состояние
-        internal float MaxStatus; // Макс. Состояние
-        internal float PercentStatus { get { return Status * 100 / MaxStatus; } }
+        public float Status
+        {
+            get { return status; }
+            set { status = value; if (status <= 0) { ok = false; status = 0; } if (status > MaxStatus) status = MaxStatus; }
+        } 
+        float status; // Состояние
+        public float MaxStatus; // Макс. Состояние
         internal float multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
         internal float missChance; // МУльтипликатор уворота
         internal bool ok; // Наличие
         internal float RezisitArmor = 0.02f; // Сопротивление урону от брони
-        internal Armor armorSet;
+        public Armor armorSet;
         public PartBody()
         {
-
+            ok = true;
+            Name = "";
+            armorSet = new Armor();
         }
 
         /// <summary>
@@ -55,18 +61,12 @@ namespace LastHero
         /// <param Name="stat"></param>
         internal void Heal(float value)
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
             if (ok)
             {
                 if (Status + value < MaxStatus)
                     Status += value;
                 else
                     Status = MaxStatus;
-                //Console.WriteLine($"Лечение на {(value)} единиц {ToString()}");
-            }
-            else
-            {
-                //Console.WriteLine($"Отсутствие части тела: {ToString()}");
             }
             Refresh();
         }
@@ -95,7 +95,6 @@ namespace LastHero
         /// </summary>
         internal void Refresh()
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
             if (!ok)
                 Status = 0;
             else
@@ -150,7 +149,7 @@ namespace LastHero
             return value;
         }
     }
-    class PartBodyNode : PartBody
+    public class PartBodyNode : PartBody
     {
         public float MaxSumStatus;
         public float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
@@ -218,7 +217,7 @@ namespace LastHero
             MaxSumStatus = body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
         }
 
-        public void WearArmor(Armor armor)
+        internal void WearArmor(Armor armor)
         {
             switch (armor.type)
             {
@@ -257,6 +256,7 @@ namespace LastHero
             rfoot.Heal(value * rfoot.multiplayOut);
             Refresh();
         }
+
         /// <summary>
         /// Распределительный дамаг
         /// </summary>

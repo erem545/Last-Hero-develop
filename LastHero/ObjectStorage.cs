@@ -11,7 +11,8 @@ namespace LastHero
     {
         public static void SerializationCharacter(Character person)
         {
-            Directory.CreateDirectory(@".\ProjectData\XML\");
+            if (!Directory.Exists(@".\ProjectData\XML\"))
+                Directory.CreateDirectory(@".\ProjectData\XML\");
             XmlSerializer formatter = new XmlSerializer(typeof(Character));
             using (FileStream fs = new FileStream($@".\ProjectData\XML\{person.MainName}.xml", FileMode.OpenOrCreate))
             {
@@ -27,21 +28,22 @@ namespace LastHero
             }
         }
 
-        public static void DeserializationCharacter(Character person)
+        public static Character DeserializationCharacter(string name)
         {
             XmlSerializer formatter = new XmlSerializer(typeof(Character));
-            using (FileStream fs = new FileStream($"{person.MainName}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@".\ProjectData\XML\{name}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {
                     Character newPerson = (Character)formatter.Deserialize(fs);
                     newPerson.UpdateAllValues();
                     Console.WriteLine("Объект десериализован");
-                    Console.WriteLine(newPerson.ToString());
+                    return newPerson;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Ошибка десериализации: " + e);
+                    return null;
                 }
             }
         }

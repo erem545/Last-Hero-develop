@@ -5,13 +5,13 @@ using System.Text;
 
 namespace LastHero
 {
-    class Armor : Item
+    public class Armor : Item
     {
-        internal int strengthValue;
-        internal int agilityValue;
-        internal int intelliganceValue;
+        public int strengthValue;
+        public int agilityValue;
+        public int intelliganceValue;
 
-        internal string type;
+        public string type;
         public Armor() : base()
         {
             Name = "Пусто";
@@ -54,7 +54,10 @@ namespace LastHero
         {
             try
             {
-                return ($"{Name} ({Level} ур., {Quality}*) {strengthValue} - {agilityValue} - {intelliganceValue}");
+                if (Name != "Пусто")
+                    return ($"{Name} ({Level} ур., {Quality}*) {strengthValue} - {agilityValue} - {intelliganceValue}");
+                else
+                    return ($"{Name}");
             }
             catch (Exception)
             {

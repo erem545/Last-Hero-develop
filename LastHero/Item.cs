@@ -6,14 +6,15 @@ using System.Text;
 namespace LastHero
 {
     [Serializable]
-    class Item
+    public class Item
     {
         internal string Name;
 
-        internal int Quality;
-        internal int Level;
-        internal int State;
+        public int Quality;
+        public int Level;
+        public int State;
 
+        public string type;
         public Item()
         {
 
