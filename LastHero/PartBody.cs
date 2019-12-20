@@ -2,38 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using UnityEditor;
 namespace LastHero
 {
+    [Serializable]
     public class PartBody
     {
 
         public string Name; // Название 
-        internal float ArmorValue
+        public float ArmorValue
         {
             get { return armorValue; }
-            set { armorValue = armorSet.agilityValue; }
+            set {  if (armorSet != null)
+                    armorValue = armorSet.armorValue + (armorSet.agilityValue * 0.25f);
+                else
+                    armorValue = value;
+            }
 
         } // Броня
         private float armorValue;
         public float Status
         {
             get { return status; }
-            set { status = value; if (status <= 0) { ok = false; status = 0; } if (status > MaxStatus) status = MaxStatus; }
+            set { status = value; if (status <= 0) { ok = false; } if (status > MaxStatus) status = MaxStatus; }
         } 
         float status; // Состояние
         public float MaxStatus; // Макс. Состояние
         internal float multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
-        internal float missChance; // МУльтипликатор уворота
         internal bool ok; // Наличие
-        internal float RezisitArmor = 0.02f; // Сопротивление урону от брони
         public Armor armorSet;
         public PartBody()
         {
             ok = true;
             Name = "";
             armorSet = new Armor();
+            MaxStatus = 0;
         }
 
         /// <summary>
@@ -50,8 +54,8 @@ namespace LastHero
             // Обязательный порядок - сначала имя, потом объявление костант
             Name = _name;
             CreateMultyplay();
-            MaxStatus = _maxStatus * multiplayOut;
-            Status = _maxStatus * multiplayOut;
+            MaxStatus = (float)Math.Round(_maxStatus * multiplayOut, 3); // ... * Процент от общего кол-ва здоровья
+            Status = MaxStatus;
             armorSet = new Armor();
         }
 
@@ -79,13 +83,8 @@ namespace LastHero
         {
             if (ok)
             {
-                Status += ((value * multiplayDamage) * (1 - (RezisitArmor * ArmorValue))) * -1;
-                if (Status < 0)
-                    Status = 0;
-                if (Status < 1)
-                {
-                    ok = false;
-                }
+                Status -= ((value - (ArmorValue * 0.2f)) * multiplayDamage);
+                Console.Write($"Получено {(value - (ArmorValue * 0.2f))} урона по {Name} ");
             }
             Refresh();
         }
@@ -95,11 +94,8 @@ namespace LastHero
         /// </summary>
         internal void Refresh()
         {
-            if (!ok)
+            if (Status <= 0)
                 Status = 0;
-            else
-                if (Status > MaxStatus)
-                Status = MaxStatus;
         }
 
         /// <summary>
@@ -114,23 +110,23 @@ namespace LastHero
                     multiplayOut = 0.42f;
                     break;
                 case "Head":
-                    multiplayDamage = 2.0f;
+                    multiplayDamage = 1.45f;
                     multiplayOut = 0.16f;
                     break;
                 case "Left Hand":
-                    multiplayDamage = 1.3f;
+                    multiplayDamage = 1.22f;
                     multiplayOut = 0.105f;
                     break;
                 case "Right Hand":
-                    multiplayDamage = 1.3f;
+                    multiplayDamage = 1.22f;
                     multiplayOut = 0.105f;
                     break;
                 case "Left Foot":
-                    multiplayDamage = 1.4f;
+                    multiplayDamage = 1.14f;
                     multiplayOut = 0.105f;
                     break;
                 case "Right Foot":
-                    multiplayDamage = 1.4f;
+                    multiplayDamage = 1.14f;
                     multiplayOut = 0.105f;
                     break;
             }
@@ -144,17 +140,26 @@ namespace LastHero
         internal float RandomDamage(float min, float max)
         {
             Random rnd = new Random(DateTime.Now.Millisecond);
-            float value = rnd.Next((int)min, (int)max);
+            float value = (float)Math.Round(rnd.Next((int)min, (int)max) + (float)rnd.NextDouble(), 3);
             Damage(value);
             return value;
         }
+        public override string ToString()
+        {
+            if (armorSet == null)
+                return ($"{Name}: {Status} / {MaxStatus}");
+            else
+                return ($"{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}");
+        }
     }
+
+    [Serializable]
     public class PartBodyNode : PartBody
     {
-        public float MaxSumStatus;
-        public float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
-        public float SumArmor { get { return body.ArmorValue + head.ArmorValue + lhand.ArmorValue + rhand.ArmorValue + lfoot.ArmorValue + rfoot.ArmorValue; } }
-        public int SumStrength
+        //public float MaxSumStatus;
+        internal float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
+        internal float SumArmor { get { return body.ArmorValue + head.ArmorValue + lhand.ArmorValue + rhand.ArmorValue + lfoot.ArmorValue + rfoot.ArmorValue; } }
+        internal int SumStrength
         {
             get
             {
@@ -167,7 +172,7 @@ namespace LastHero
                       rfoot.armorSet.strengthValue;
             }
         }
-        public int SumAgility
+        internal int SumAgility
         {
             get
             {
@@ -180,7 +185,7 @@ namespace LastHero
                       rfoot.armorSet.agilityValue;
             }
         }
-        public int SumIntelligance
+        internal int SumIntelligance
         {
             get
             {
@@ -204,7 +209,12 @@ namespace LastHero
 
         public PartBodyNode()
         {
-
+            body = new PartBody("Body", 0);
+            head = new PartBody("Head", 0);
+            lhand = new PartBody("Left Hand", 0);
+            rhand = new PartBody("Right Hand", 0);
+            lfoot = new PartBody("Left Foot", 0);
+            rfoot = new PartBody("Right Foot", 0);
         }
         public PartBodyNode(float _maxSum)
         {
@@ -214,7 +224,7 @@ namespace LastHero
             rhand = new PartBody("Right Hand", _maxSum);
             lfoot = new PartBody("Left Foot", _maxSum);
             rfoot = new PartBody("Right Foot", _maxSum);
-            MaxSumStatus = body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
+            //MaxSumStatus = body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status;
         }
 
         internal void WearArmor(Armor armor)
@@ -248,15 +258,95 @@ namespace LastHero
         public void DistributeHealth(float value)
         {
             //lfoot.Status += value * lfoot.multiplayOut;
-            body.Heal(value * body.multiplayOut);
-            head.Heal(value * head.multiplayOut);
-            lhand.Heal(value * lhand.multiplayOut);
-            rhand.Heal(value * rhand.multiplayOut);
-            lfoot.Heal(value * lfoot.multiplayOut);
-            rfoot.Heal(value * rfoot.multiplayOut);
+            if (body != null)
+                body.Heal(value * body.multiplayOut);
+            if (head != null)
+                head.Heal(value * head.multiplayOut);
+            if (lhand != null)
+                lhand.Heal(value * lhand.multiplayOut);
+            if (rhand != null)
+                rhand.Heal(value * rhand.multiplayOut);
+            if (lfoot != null)
+                lfoot.Heal(value * lfoot.multiplayOut);
+            if (rfoot != null)
+                rfoot.Heal(value * rfoot.multiplayOut);
+
             Refresh();
         }
+        /// <summary>
+        /// Получить урон по случайной части тела от enemy
+        /// </summary>
+        /// <param name="enemy"></param>
+        public void DamageToRandomPart(Character enemy)
+        {
+            float min = enemy.minAttack;
+            float max = enemy.maxAttack;
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            int index = rnd.Next(0, 6);
+            switch (index)
+            {
+                case 0:
+                    if (body.ok)
+                        body.Damage(RandomDamage(min, max));
+                    break;
+                case 1:
+                    if (head.ok)
+                        head.Damage(RandomDamage(min, max));
+                    break;
+                case 2:
+                    if (lhand.ok)
+                        lhand.Damage(RandomDamage(min, max));
+                    break;
+                case 3:
+                    if (rhand.ok)
+                        rhand.Damage(RandomDamage(min, max));
+                    break;
+                case 4:
+                    if (lfoot.ok)
+                        lfoot.Damage(RandomDamage(min, max));
+                    break;
+                case 5:
+                    if (rfoot.ok)
+                        rfoot.Damage(RandomDamage(min, max));
+                    break;
+            }
+            Console.WriteLine($"от {enemy.MainName}");
+        }
 
+        public void DamageToRandomPart(float damage)
+        {
+            float min = damage;
+            float max = damage;
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            int index = rnd.Next(0, 6);
+            switch (index)
+            {
+                case 0:
+                    if (body.ok)
+                        body.Damage(RandomDamage(min, max));
+                    break;
+                case 1:
+                    if (head.ok)
+                        head.Damage(RandomDamage(min, max));
+                    break;
+                case 2:
+                    if (lhand.ok)
+                        lhand.Damage(RandomDamage(min, max));
+                    break;
+                case 3:
+                    if (rhand.ok)
+                        rhand.Damage(RandomDamage(min, max));
+                    break;
+                case 4:
+                    if (lfoot.ok)
+                        lfoot.Damage(RandomDamage(min, max));
+                    break;
+                case 5:
+                    if (rfoot.ok)
+                        rfoot.Damage(RandomDamage(min, max));
+                    break;
+            }
+        }
         /// <summary>
         /// Распределительный дамаг
         /// </summary>
@@ -292,51 +382,28 @@ namespace LastHero
             rfoot.Refresh();
         }
 
-        /// <summary>
-        /// Урон по случайной части тела
-        /// </summary>
-        public void AttackToRandomPart(float min, float max)
+        public override string ToString()
         {
-            Random rnd = new Random(DateTime.Now.Millisecond);
-            int index = rnd.Next(0, 6);
-            switch (index)
+            try
             {
-                case 0:
-                    if (body.ok)
-                        body.Damage(RandomDamage(min, max));
-                    else
-                        AttackToRandomPart(min, max);
-                    break;
-                case 1:
-                    if (head.ok)
-                        head.Damage(RandomDamage(min, max));
-                    else
-                        AttackToRandomPart(min, max);
-                    break;
-                case 2:
-                    if (lhand.ok)
-                        lhand.Damage(RandomDamage(min, max));
-                    else
-                        AttackToRandomPart(min, max);
-                    break;
-                case 3:
-                    if (rhand.ok)
-                        rhand.Damage(RandomDamage(min, max));
-                    else
-                        AttackToRandomPart(min, max);
-                    break;
-                case 4:
-                    if (lfoot.ok)
-                        lfoot.Damage(RandomDamage(min, max));
-                    else
-                        AttackToRandomPart(min, max);
-                    break;
-                case 5:
-                    if (rfoot.ok)
-                        rfoot.Damage(RandomDamage(min, max));
-                    else
-                        AttackToRandomPart(min, max);
-                    break;
+                return (
+                    $"- - - -\n" +
+                    $"{head.ToString()}\n" +
+                    $"- - - -\n" +
+                    $"{body.ToString()}\n" +
+                    $"- - - -\n" +
+                    $"{lhand.ToString()}\n" +
+                    $"- - - -\n" +
+                    $"{rhand.ToString()}\n" +
+                    $"- - - -\n" +
+                    $"{lfoot.ToString()}\n" +
+                    $"- - - -\n" +
+                    $"{rfoot.ToString()}\n" +
+                    $"- - - -\n");
+            }
+            catch (NullReferenceException)
+            {
+                return "";
             }
         }
     }

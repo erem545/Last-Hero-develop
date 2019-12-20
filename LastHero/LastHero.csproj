@@ -43,13 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Armor.cs" />
-    <Compile Include="Bot.cs" />
     <Compile Include="Character.cs" />
-    <Compile Include="Human.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ObjectStorage.cs" />
-    <Compile Include="Ogre.cs" />
     <Compile Include="PartBody.cs" />
+    <Compile Include="PositionClass.cs" />
     <Compile Include="ProbabilityClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Weapon.cs" />

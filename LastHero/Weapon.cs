@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using UnityEditor;
 namespace LastHero
 {
     [Serializable]
@@ -10,7 +10,6 @@ namespace LastHero
     {
         public float minDamage;
         public float maxDamage;
-        public string type;
         public Weapon() : base()
         {
             Name = "Кулак";
@@ -20,28 +19,18 @@ namespace LastHero
 
             minDamage = 1;
             maxDamage = 2;
-            type = "Ближний бой";
+            type = "Оружие";
         }
 
         public Weapon(string _name, int _quality, int _level, int _state) : base(_name, _quality, _level, _state)
         {
-            Name = _name;
-            Quality = _quality;
-            Level = _level;
-            State = _state;
-
             minDamage = 1;
             maxDamage = 2;
-            type = "Ближний бой";
+            type = "Оружие";
         }
 
         public Weapon(string _name, int _quality, int _level, int _state, float _minDamage, float _maxDamage, string _type) : base(_name, _quality, _level, _state)
         {
-            Name = _name;
-            Quality = _quality;
-            Level = _level;
-            State = _state;
-
             minDamage = _minDamage;
             maxDamage = _maxDamage;
             type = _type;
@@ -52,7 +41,7 @@ namespace LastHero
             if (this == null)
                 return "";
             return (
-                $"{Name}  {Level}lvl  {Quality}*"
+                $"{Name} ({minDamage} - {maxDamage}) " + base.ToString()
                 );
 
         }
