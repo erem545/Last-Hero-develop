@@ -39,7 +39,7 @@ namespace LastHero
             if (this == null)
                 return "";
             return (
-                $"{Name} ({minDamage}-{maxDamage}) ");
+                $"{Name} ({minDamage}-{maxDamage})\nУровень:{Level} Качество:{Quality} Состояние:{State}%");
 
         }
     }

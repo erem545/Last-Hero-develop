@@ -156,7 +156,7 @@ namespace LastHero
             if (armorSet == null)
                 return ($"{Name}: {Status} / {MaxStatus}");
             else
-                return ($"-{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}\n");
+                return ($"{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}\n");
         }
     }
 
@@ -167,7 +167,7 @@ namespace LastHero
         internal float SumStatus { get { return body.Status + head.Status + lhand.Status + rhand.Status + lfoot.Status + rfoot.Status; } }
         internal float SumMaxStatus { get { return body.MaxStatus + head.MaxStatus + lhand.MaxStatus + rhand.MaxStatus + lfoot.MaxStatus + rfoot.MaxStatus; } }
         internal float SumArmor { get { return body.ArmorValue + head.ArmorValue + lhand.ArmorValue + rhand.ArmorValue + lfoot.ArmorValue + rfoot.ArmorValue; } }
-        internal int SumStrength
+        public int SumStrength
         {
             get
             {
@@ -180,7 +180,7 @@ namespace LastHero
                       rfoot.armorSet.strengthValue;
             }
         }
-        internal int SumAgility
+        public int SumAgility
         {
             get
             {
@@ -193,7 +193,7 @@ namespace LastHero
                       rfoot.armorSet.agilityValue;
             }
         }
-        internal int SumIntelligance
+        public int SumIntelligance
         {
             get
             {

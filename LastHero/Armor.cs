@@ -42,7 +42,7 @@ namespace LastHero
         {
             try
             {
-                return ($"{Name} ({strengthValue}-{agilityValue}-{intelliganceValue}) Защита: {armorValue} ");
+                return ($"{Name} ({strengthValue}-{agilityValue}-{intelliganceValue})\nЗащита:{armorValue} Уровень:{Level} Качество:{Quality} Состояние:{State}%");
             }
             catch (Exception)
             {

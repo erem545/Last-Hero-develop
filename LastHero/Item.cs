@@ -62,7 +62,7 @@ namespace LastHero
         {
             try
             {
-                return ($"{Name} Уровень:{Level} Качество:{Quality} Состояние:{state}%");
+                return ($"{Name} Уровень:{Level} Качество:{Quality} Состояние:{State}%");
             }
             catch (Exception)
             {

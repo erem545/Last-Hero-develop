@@ -11,15 +11,16 @@ namespace LastHero
     {
         public static void SerializationCharacter(Character person)
         {
-            if (!Directory.Exists(@".\ProjectData\XML\"))
-                Directory.CreateDirectory(@".\ProjectData\XML\");
+            string path = @".\ProjectData\person\";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
             XmlSerializer formatter = new XmlSerializer(typeof(Character));
-            using (FileStream fs = new FileStream($@".\ProjectData\XML\{person.MainName}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@"{path}{person.MainName}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {
                     formatter.Serialize(fs, person);
-                    Console.WriteLine("Успешная сериализация!");
+                    Console.WriteLine($"Успешная сериализация: {path}{person.MainName}.xml");
                 }
                 catch (Exception e)
                 {
@@ -29,14 +30,16 @@ namespace LastHero
         }
         public static Character DeserializationCharacter(string name)
         {
+            string path = @".\ProjectData\person\";
             XmlSerializer formatter = new XmlSerializer(typeof(Character));
-            using (FileStream fs = new FileStream($@".\ProjectData\XML\{name}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@"{path}{name}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {
                     Character newPerson = (Character)formatter.Deserialize(fs);
-                    Console.WriteLine("Объект десериализован");
-                    
+                    Console.WriteLine("Успешная десериализация!");
+                    Console.WriteLine($"Объект десериализован: {path}{newPerson.MainName}.xml");
+                    newPerson.UpdateAll();
                     return newPerson;
                 }
                 catch (Exception e)
@@ -54,18 +57,18 @@ namespace LastHero
                 Directory.CreateDirectory(path);
             item.d_path = $@"{path}\{item.Name}.xml";
             XmlSerializer formatter = new XmlSerializer(typeof(Item));
-            using (FileStream fs = new FileStream($@"{path}\{item.Name}.xml", FileMode.OpenOrCreate))
-            {
-                try
+                using (FileStream fs = new FileStream($@"{path}\{item.Name}.xml", FileMode.Create))
                 {
-                    formatter.Serialize(fs, item);
-                    Console.WriteLine("Успешная сериализация!");
+                    try
+                    {
+                        formatter.Serialize(fs, item);
+                    Console.WriteLine($"Успешная сериализация: {path}{item.Name}.xml");
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Ошибка сериализации: " + e);
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Ошибка сериализации: " + e);
+                    }
                 }
-            }
         }
         public static Item DeserializationItem(string name)
         {
@@ -76,7 +79,8 @@ namespace LastHero
                 try
                 {
                     Item newitem = (Item)formatter.Deserialize(fs);
-                    Console.WriteLine("Объект десериализован");
+                    Console.WriteLine("Успешная десериализация!");
+                    Console.WriteLine(newitem.ToString() + "\nПуть: " + newitem.d_path);
                     return newitem;
                 }
                 catch (Exception e)
@@ -94,12 +98,12 @@ namespace LastHero
                 Directory.CreateDirectory(path);
             item.d_path = $@"{path}\{item.Name}.xml";
             XmlSerializer formatter = new XmlSerializer(typeof(Armor));
-            using (FileStream fs = new FileStream($@"{path}\{item.Name}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@"{path}\{item.Name}.xml", FileMode.Create))
             {
                 try
                 {
                     formatter.Serialize(fs, item);
-                    Console.WriteLine("Успешная сериализация!");
+                    Console.WriteLine($"Успешная сериализация: {path}{item.Name}.xml");
                 }
                 catch (Exception e)
                 {
@@ -116,7 +120,8 @@ namespace LastHero
                 try
                 {
                     Armor newitem = (Armor)formatter.Deserialize(fs);
-                    Console.WriteLine("Объект десериализован");
+                    Console.WriteLine("Успешная десериализация!");
+                    Console.WriteLine(newitem.ToString() + "\nПуть: " + newitem.d_path);
                     return newitem;
                 }
                 catch (Exception e)
@@ -140,7 +145,7 @@ namespace LastHero
                 try
                 {
                     formatter.Serialize(fs, item);
-                    Console.WriteLine("Успешная сериализация!");
+                    Console.WriteLine($"Успешная сериализация: {path}{item.Name}.xml");
                 }
                 catch (Exception e)
                 {
@@ -157,7 +162,8 @@ namespace LastHero
                 try
                 {
                     Weapon newitem = (Weapon)formatter.Deserialize(fs);
-                    Console.WriteLine("Объект десериализован");
+                    Console.WriteLine("Успешная десериализация!");
+                    Console.WriteLine(newitem.ToString() + "\nПуть: " + newitem.d_path);
                     return newitem;
                 }
                 catch (Exception e)
