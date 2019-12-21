@@ -69,7 +69,7 @@ namespace LastHero
         public float Accuaracy { get { return Agility * 0.2f; } } // Точность
 
         //
-        public float MaxEndurance { get { return maxEnduranceValue ; } set { maxEnduranceValue = value ; } } //+ (agility * 0.2f) + (Leadership * 0.5f)
+        public float MaxEndurance { get { return maxEnduranceValue ; } set { maxEnduranceValue = value + Agility * 0.3f; } } // 
         public float Endurance
         { 
             get { if (bodyNode !=null) return endurance; else return endurance; }
@@ -80,19 +80,23 @@ namespace LastHero
 
         //
         public float MaxHealth { 
-            get { 
-                return maxHealthValue ; 
+            get {
+                //if (bodyNode != null)
+                //    return bodyNode.SumMaxStatus;
+                //else
+                return maxHealthValue; 
             } 
             set
             {
-                maxHealthValue = value; 
+                maxHealthValue = value + Strength * 0.5f;
             } 
         }
+
         public float Health {
             get 
             {
                 if (bodyNode != null)
-                    return bodyNode.SumStatus; //  + (strength * 0.5f) + (Leadership * 1)
+                    return bodyNode.SumStatus;
                 else
                     return health;
             } 
@@ -130,14 +134,24 @@ namespace LastHero
             }
             set
             {
-                if (XP > (level * XP))
-                    level++;
-                else
-                    level = value;
+                level = value;
             }
         } // Уровень
         int level;
-        public int XP; // Опыт
+        public int XP
+        {
+            get
+            {
+                return xp;
+            }
+            set
+            {
+                if (XP >= (level * 1000))
+                    level++;
+                xp = value;
+            }
+        }// Опыт
+        int xp;
         public Weapon weaponNode;
         public PartBodyNode bodyNode; // Узел для частей тела
 
@@ -163,16 +177,16 @@ namespace LastHero
             Intelligance = i;
             Leadership = 0;
             Level = 1;
-            XP = 1;
+            XP = 0;
             MainName = _name;
-            ok = true;
-            bodyNode = new PartBodyNode(_health);
+            ok = true; 
+            MaxHealth = _health + Strength * 0.5f;
+            bodyNode = new PartBodyNode(MaxHealth);
             weaponNode = new Weapon();
             MaxEndurance = _maxEndurance;
             Endurance = MaxEndurance;
-
-            Health = _health;
-            MaxHealth = Health;
+            Health = MaxHealth;
+            
         }
 
         public void ToTake(Item _item)
@@ -238,12 +252,16 @@ namespace LastHero
         /// <param name="value">Значение</param>
         public void ToHeal(float value)
         {
-            if (ok)
-            {
-                bodyNode.DistributeHealth(value);
-            }
+            bodyNode.DistributeHealth(value);
+            
         }
 
+        public void UpdateAll()
+        {
+            Endurance = MaxEndurance;
+            bodyNode.CreateMultyplay();
+            bodyNode.UpdateMaxStatusAllParts(MaxHealth);
+        }
         /// <summary>
         /// Убить персонажа
         /// </summary>
@@ -255,12 +273,6 @@ namespace LastHero
             XP = 0;
             bodyNode.Dead();
             Endurance = 0;
-        }
-
-        public void UpdateAllValues()
-        {          
-            Endurance = MaxEndurance;
-            Health = MaxHealth;
         }
 
         /// <summary>

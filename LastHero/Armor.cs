@@ -42,7 +42,7 @@ namespace LastHero
         {
             try
             {
-                return ($"{Name} ({strengthValue} - {agilityValue} - {intelliganceValue}) Защита: {armorValue} " + base.ToString());
+                return ($"{Name} ({strengthValue}-{agilityValue}-{intelliganceValue}) Защита: {armorValue} ");
             }
             catch (Exception)
             {

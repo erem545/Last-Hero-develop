@@ -13,9 +13,7 @@ namespace LastHero
         public Weapon() : base()
         {
             Name = "Кулак";
-            Quality = 0;
-            Level = 1;
-            State = 1;
+            State = 100;
 
             minDamage = 1;
             maxDamage = 2;
@@ -41,8 +39,7 @@ namespace LastHero
             if (this == null)
                 return "";
             return (
-                $"{Name} ({minDamage} - {maxDamage}) " + base.ToString()
-                );
+                $"{Name} ({minDamage}-{maxDamage}) ");
 
         }
     }
