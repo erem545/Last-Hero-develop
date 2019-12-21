@@ -17,59 +17,41 @@ namespace LastHero
         // Характеристики
         public int Strength
         {
-            get { 
+            get 
+            { 
                 if (bodyNode == null) 
                     return 0; 
-
-                return strength; }
-            set
-            {
-                if (bodyNode != null)
-                {
-                    strength = bodyNode.SumStrength + value;
-                }
-                else
-                    strength = value; }
+                return bodyNode.SumStrength + StrengthStats; 
+            }
         }
         public int Agility
         {
-            get { 
+            get 
+            { 
                 if (bodyNode == null) 
                     return 0;
-
-                return agility; }
-            set
-            {
-                if (bodyNode != null)
-                {
-                    agility = value + bodyNode.SumAgility;
-                }else
-                agility = value; }
+                return AgilityStats + bodyNode.SumAgility; 
+            }
         }
         public int Intelligance
         {
-            get { 
+            get 
+            {              
                 if (bodyNode == null) 
                     return 0;
-
-                return intelligance; }
-            set
-            {
-                if (bodyNode != null)
-                {
-                    intelligance = value+ bodyNode.SumIntelligance;
-                }else
-                intelligance = value; }
+                return IntelliganceStats + bodyNode.SumIntelligance; 
+            }
         }
-        int strength; // Сила
-        int agility; // Ловкость    
-        int intelligance; // Интеллект
+
+        public int StrengthStats; // Сила
+        public int AgilityStats; // Ловкость    
+        public int IntelliganceStats; // Интеллект
         public int Leadership; // Лидерство
 
         public float Accuaracy { get { return Agility * 0.2f; } } // Точность
 
         //
-        public float MaxEndurance { get { return maxEnduranceValue ; } set { maxEnduranceValue = value + Agility * 0.3f; } } // 
+        public float MaxEndurance { get { return maxEnduranceValue + Agility * 0.15f + Leadership * 0.5f; } set { maxEnduranceValue = value; } } // 
         public float Endurance
         { 
             get { if (bodyNode !=null) return endurance; else return endurance; }
@@ -84,11 +66,11 @@ namespace LastHero
                 //if (bodyNode != null)
                 //    return bodyNode.SumMaxStatus;
                 //else
-                return maxHealthValue; 
+                return maxHealthValue + Strength * 0.25f + Leadership * 1; 
             } 
             set
             {
-                maxHealthValue = value + Strength * 0.5f;
+                maxHealthValue = value;
             } 
         }
 
@@ -122,8 +104,8 @@ namespace LastHero
         public float ArmorValue { get { return bodyNode.SumArmor; } } // Общая защита
 
         internal float AverageAttack { get { return ((minAttack + maxAttack) / 2); } } // Атака
-        internal float minAttack { get { return (weaponNode.minDamage + ((agility + strength) * 0.01f)); } } // Мин. Атака
-        internal float maxAttack { get { return (weaponNode.maxDamage + ((agility + strength) * 0.01f)); } } // Макс. Атака
+        internal float minAttack { get { return (weaponNode.minDamage + ((AgilityStats + StrengthStats) * 0.01f)); } } // Мин. Атака
+        internal float maxAttack { get { return (weaponNode.maxDamage + ((AgilityStats + StrengthStats) * 0.01f)); } } // Макс. Атака
 
         // Другое
         public int Level 
@@ -135,6 +117,8 @@ namespace LastHero
             set
             {
                 level = value;
+                if (level % 10 == 0)
+                    Leadership=level/10;
             }
         } // Уровень
         int level;
@@ -142,12 +126,14 @@ namespace LastHero
         {
             get
             {
+                if (xp > (Level * 1000))
+                {
+                    LevelUP();
+                };
                 return xp;
             }
             set
             {
-                if (XP >= (level * 1000))
-                    level++;
                 xp = value;
             }
         }// Опыт
@@ -160,11 +146,11 @@ namespace LastHero
             MainName = null;          
             Level = 0;
             XP = 0;
-            weaponNode = null;
-            Strength = 0;
+            weaponNode = null;            
             ok = true;
-            Agility = 0;
-            Intelligance = 0;
+            StrengthStats = 0;
+            AgilityStats = 0;
+            IntelliganceStats = 0;
             Leadership = 0;
             Endurance = MaxEndurance = 0;
             Health = 0;
@@ -172,9 +158,9 @@ namespace LastHero
         }
         public Character(string _name, float _health, float _maxEndurance, int s, int a, int i)
         {
-            Strength = s;
-            Agility = a;
-            Intelligance = i;
+            StrengthStats = s;
+            AgilityStats = a;
+            IntelliganceStats = i;
             Leadership = 0;
             Level = 1;
             XP = 0;
@@ -229,22 +215,29 @@ namespace LastHero
         {
             if (ok)
             {
-                 bodyNode.DamageToRandomPart(value);
+                 bodyNode.DistributedDamage(value);
             }
         }
 
         public void ToAttack(Character enemy)
         {
             if (enemy.ok)
-            {              
-                this.Endurance -= 10;
-                if (ProbabilityClass.ChanceToHit(this))
-                    enemy.bodyNode.DamageToRandomPart(this);
+            {
+                    
+                if (Endurance >= 10) 
+                { 
+                    this.Endurance -= 10;
+                    if (ProbabilityClass.ChanceToHit(this))
+                        enemy.bodyNode.DamageToRandomPart(this);
+                    else
+                        Console.WriteLine("Промах!");
+                }
                 else
-                    Console.WriteLine("Промах!");
+                {
+                    Console.WriteLine("Устал!");
+                }
             }
         }
-
 
         /// <summary>
         /// Восстановить здоровье распределительно
@@ -256,11 +249,43 @@ namespace LastHero
             
         }
 
+
+        public void ChangeStrength(int value)
+        {
+            StrengthStats += value;
+        }
+        public void ChangeAgility(int value)
+        {
+            AgilityStats += value;
+        }
+        public void ChangeIntelligance(int value)
+        {
+            IntelliganceStats += value;
+        }
+        public int CalcReward()
+        {
+            return ((Strength * Agility * Intelligance) / (Strength + Agility + Intelligance));
+        }
+
+        public void GetReward(int value)
+        {
+            XP += value;
+        }
+
+        public void LevelUP()
+        {
+            Level++;
+            StrengthStats+=3;
+            AgilityStats += 3;
+            IntelliganceStats += 3;
+            UpdateAll();
+        }
+
         public void UpdateAll()
         {
-            Endurance = MaxEndurance;
             bodyNode.CreateMultyplay();
             bodyNode.UpdateMaxStatusAllParts(MaxHealth);
+            Endurance = MaxEndurance;
         }
         /// <summary>
         /// Убить персонажа
@@ -288,13 +313,13 @@ namespace LastHero
             if (Endurance > MaxEndurance)
                 Endurance = MaxEndurance;
             else if (Endurance < MaxEndurance)
-                Endurance += agility * 0.001f;
+                Endurance += AgilityStats * 0.0006f;
 
             if (Health > 0)
             {
                 if (ok)
                 {
-                    ToHeal(Strength * 0.001f);
+                    ToHeal(Strength * 0.0001f);
                     if (Health > MaxHealth)
                         Health = MaxHealth;
                 }
@@ -322,8 +347,8 @@ namespace LastHero
                     $"Точность: {Accuaracy}\n" +
                     $"Защита: {ArmorValue}\n" +
                     $"Лидерство: {Leadership}\n" +
-                    $"{weaponNode.ToString()}\n" +
-                    $"{bodyNode.ToString()}");
+                    $"\n{weaponNode.ToString()}\n" +
+                    $"\n{bodyNode.ToString()}");
         }
         }
     }
