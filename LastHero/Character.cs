@@ -171,8 +171,7 @@ namespace LastHero
             weaponNode = new Weapon();
             MaxEndurance = _maxEndurance;
             Endurance = MaxEndurance;
-            Health = MaxHealth;
-            
+            UpdateAll();
         }
 
         public void ToTake(Item _item)
@@ -219,7 +218,12 @@ namespace LastHero
             }
         }
 
-        public void ToAttack(Character enemy)
+        /// <summary>
+        /// Провести атаку на противника enemy
+        /// </summary>
+        /// <param name="enemy">противник</param>
+        /// <returns></returns>
+        public float ToAttack(Character enemy)
         {
             if (enemy.ok)
             {
@@ -228,15 +232,23 @@ namespace LastHero
                 { 
                     this.Endurance -= 10;
                     if (ProbabilityClass.ChanceToHit(this))
-                        enemy.bodyNode.DamageToRandomPart(this);
+                    {
+
+                        return enemy.bodyNode.DamageToRandomPart(this);
+                    }
                     else
+                    {
                         Console.WriteLine("Промах!");
+                        return -1;
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Устал!");
+                    return -1;
                 }
             }
+            return -1;
         }
 
         /// <summary>
@@ -313,13 +325,13 @@ namespace LastHero
             if (Endurance > MaxEndurance)
                 Endurance = MaxEndurance;
             else if (Endurance < MaxEndurance)
-                Endurance += AgilityStats * 0.0006f;
+                Endurance += Agility * 0.0006f;
 
             if (Health > 0)
             {
                 if (ok)
                 {
-                    ToHeal(Strength * 0.0001f);
+                    ToHeal(Strength * 0.00001f);
                     if (Health > MaxHealth)
                         Health = MaxHealth;
                 }

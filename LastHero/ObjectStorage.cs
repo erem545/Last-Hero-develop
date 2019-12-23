@@ -37,8 +37,7 @@ namespace LastHero
                 try
                 {
                     Character newPerson = (Character)formatter.Deserialize(fs);
-                    Console.WriteLine("Успешная десериализация!");
-                    Console.WriteLine($"Объект десериализован: {path}{newPerson.MainName}.xml");
+                    Console.WriteLine($"Успешная десериализация: {path}{newPerson.MainName}.xml");
                     newPerson.UpdateAll();
                     return newPerson;
                 }
@@ -52,12 +51,12 @@ namespace LastHero
 
         public static void SerizlizationItem(Item item)
         {
-            string path = @".\ProjectData\items\xml";
+            string path = @".\ProjectData\items\xml\";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             item.d_path = $@"{path}\{item.Name}.xml";
             XmlSerializer formatter = new XmlSerializer(typeof(Item));
-                using (FileStream fs = new FileStream($@"{path}\{item.Name}.xml", FileMode.Create))
+                using (FileStream fs = new FileStream($@"{path}{item.Name}.xml", FileMode.Create))
                 {
                     try
                     {
@@ -72,15 +71,14 @@ namespace LastHero
         }
         public static Item DeserializationItem(string name)
         {
-            string path = @".\ProjectData\items\xml";
+            string path = @".\ProjectData\items\xml\";
             XmlSerializer formatter = new XmlSerializer(typeof(Item));
-            using (FileStream fs = new FileStream($@"{path}\{name}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@"{path}{name}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {
                     Item newitem = (Item)formatter.Deserialize(fs);
-                    Console.WriteLine("Успешная десериализация!");
-                    Console.WriteLine(newitem.ToString() + "\nПуть: " + newitem.d_path);
+                    Console.WriteLine($"Успешная десериализация: {path}{newitem.Name}.xml");
                     return newitem;
                 }
                 catch (Exception e)
@@ -93,12 +91,12 @@ namespace LastHero
 
         public static void SerizlizationArmor(Armor item)
         {
-            string path = @".\ProjectData\armor\xml";
+            string path = @".\ProjectData\armor\xml\";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             item.d_path = $@"{path}\{item.Name}.xml";
             XmlSerializer formatter = new XmlSerializer(typeof(Armor));
-            using (FileStream fs = new FileStream($@"{path}\{item.Name}.xml", FileMode.Create))
+            using (FileStream fs = new FileStream($@"{path}{item.Name}.xml", FileMode.Create))
             {
                 try
                 {
@@ -113,15 +111,14 @@ namespace LastHero
         }
         public static Armor DeserializationArmor(string name)
         {
-            string path = @".\ProjectData\armor\xml";
+            string path = @".\ProjectData\armor\xml\";
             XmlSerializer formatter = new XmlSerializer(typeof(Armor));
-            using (FileStream fs = new FileStream($@"{path}\{name}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@"{path}{name}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {
                     Armor newitem = (Armor)formatter.Deserialize(fs);
-                    Console.WriteLine("Успешная десериализация!");
-                    Console.WriteLine(newitem.ToString() + "\nПуть: " + newitem.d_path);
+                    Console.WriteLine($"Успешная десериализация: {path}{newitem.Name}.xml");
                     return newitem;
                 }
                 catch (Exception e)
@@ -135,12 +132,12 @@ namespace LastHero
 
         public static void SerizlizationWeapon(Weapon item)
         {
-            string path = @".\ProjectData\weapon\xml";
+            string path = @".\ProjectData\weapon\xml\";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-            item.d_path = $@"{path}\{item.Name}.xml";
+            item.d_path = $@"{path}{item.Name}.xml";
             XmlSerializer formatter = new XmlSerializer(typeof(Weapon));
-            using (FileStream fs = new FileStream($@"{path}\{item.Name}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@"{path}{item.Name}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {
@@ -155,15 +152,14 @@ namespace LastHero
         }
         public static Weapon DeserializationWeapon(string name)
         {
-            string path = @".\ProjectData\weapon\xml";
+            string path = @".\ProjectData\weapon\xml\";
             XmlSerializer formatter = new XmlSerializer(typeof(Weapon));
-            using (FileStream fs = new FileStream($@"{path}\{name}.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($@"{path}{name}.xml", FileMode.OpenOrCreate))
             {
                 try
                 {
                     Weapon newitem = (Weapon)formatter.Deserialize(fs);
-                    Console.WriteLine("Успешная десериализация!");
-                    Console.WriteLine(newitem.ToString() + "\nПуть: " + newitem.d_path);
+                    Console.WriteLine($"Успешная десериализация: {path}{newitem.Name}.xml");
                     return newitem;
                 }
                 catch (Exception e)

@@ -86,7 +86,7 @@ namespace LastHero
         /// Повреждение части тела на value единиц
         /// </summary>
         /// <param Name="stat"></param>
-        internal void Damage(float value)
+        internal float Damage(float value)
         {
             if (ok)
             {
@@ -94,6 +94,7 @@ namespace LastHero
                 Console.Write($"Получено {((value - (ArmorValue * 0.2f)))} ({value}) урона по {Name} ");
             }
             Refresh();
+            return ((value - (ArmorValue * 0.2f)));
         }
 
         /// <summary>
@@ -156,7 +157,7 @@ namespace LastHero
             if (armorSet == null)
                 return ($"{Name}: {Status} / {MaxStatus}");
             else
-                return ($"{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}\n");
+                return ($"{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}");
         }
     }
 
@@ -278,40 +279,42 @@ namespace LastHero
         /// Получить урон по случайной части тела от enemy
         /// </summary>
         /// <param name="enemy"></param>
-        public void DamageToRandomPart(Character enemy)
+        public float DamageToRandomPart(Character enemy)
         {
             float min = enemy.minAttack;
             float max = enemy.maxAttack;
+            float dmg = 0;
             Random rnd = new Random(DateTime.Now.Millisecond);
             int index = rnd.Next(0, 6);
             switch (index)
             {
                 case 0:
                     if (body.ok)
-                        body.Damage(RandomDamage(min, max));
+                        dmg = body.Damage(RandomDamage(min, max));
                     break;
                 case 1:
                     if (head.ok)
-                        head.Damage(RandomDamage(min, max));
+                        dmg = head.Damage(RandomDamage(min, max));
                     break;
                 case 2:
                     if (lhand.ok)
-                        lhand.Damage(RandomDamage(min, max));
+                        dmg = lhand.Damage(RandomDamage(min, max));
                     break;
                 case 3:
                     if (rhand.ok)
-                        rhand.Damage(RandomDamage(min, max));
+                        dmg = rhand.Damage(RandomDamage(min, max));
                     break;
                 case 4:
                     if (lfoot.ok)
-                        lfoot.Damage(RandomDamage(min, max));
+                        dmg = lfoot.Damage(RandomDamage(min, max));
                     break;
                 case 5:
                     if (rfoot.ok)
-                        rfoot.Damage(RandomDamage(min, max));
+                        dmg = rfoot.Damage(RandomDamage(min, max));
                     break;
             }
             Console.WriteLine($"от {enemy.MainName}");
+            return dmg;
         }
 
         public void DamageToRandomPart(float damage)
