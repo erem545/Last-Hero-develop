@@ -140,12 +140,14 @@ namespace LastHero
         int xp;
         public Weapon weaponNode;
         public PartBodyNode bodyNode; // Узел для частей тела
+        public string Info;
 
         public Character()
         {
             MainName = null;          
             Level = 0;
             XP = 0;
+            Info = "";
             weaponNode = null;            
             ok = true;
             StrengthStats = 0;
@@ -156,13 +158,14 @@ namespace LastHero
             Health = 0;
             MaxHealth = Health;
         }
-        public Character(string _name, float _health, float _maxEndurance, int s, int a, int i)
+        public Character(string _name, float _health, float _maxEndurance, int s, int a, int i, string info)
         {
             StrengthStats = s;
             AgilityStats = a;
             IntelliganceStats = i;
             Leadership = 0;
             Level = 1;
+            Info = info;
             XP = 0;
             MainName = _name;
             ok = true; 
@@ -219,22 +222,27 @@ namespace LastHero
         }
 
         /// <summary>
-        /// Провести атаку на противника enemy
+        /// 
         /// </summary>
-        /// <param name="enemy">противник</param>
-        /// <returns></returns>
+        /// <param name="enemy"></param>
+        /// <returns>Возвращает кол-во урона (-1 - промах, -2 - нет энергии, -3 - Убийство противника)</returns>
         public float ToAttack(Character enemy)
         {
             if (enemy.ok)
-            {
-                    
-                if (Endurance >= 10) 
+            {              
+                if (Endurance >= 5) 
                 { 
-                    this.Endurance -= 10;
+                    this.Endurance -= 5;
                     if (ProbabilityClass.ChanceToHit(this))
                     {
-
-                        return enemy.bodyNode.DamageToRandomPart(this);
+                        float d = enemy.bodyNode.DamageToRandomPart(this);
+                        if (enemy.ok)
+                            return d;
+                        else
+                        {
+                            Console.WriteLine("Убийство!");
+                            return -3;
+                        }
                     }
                     else
                     {
@@ -245,7 +253,7 @@ namespace LastHero
                 else
                 {
                     Console.WriteLine("Устал!");
-                    return -1;
+                    return -2;
                 }
             }
             return -1;

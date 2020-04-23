@@ -154,10 +154,11 @@ namespace LastHero
         }
         public override string ToString()
         {
-            if (armorSet == null)
-                return ($"{Name}: {Status} / {MaxStatus}");
-            else
-                return ($"{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}");
+            //if (armorSet == null)
+            //    return ($"{Name}: {Status} / {MaxStatus}");
+            //else
+            //    return ($"{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}");
+            return ($"{Name}: {Math.Round(Status, 2)} / {Math.Round(Status * 100 / MaxStatus)}% ({MaxStatus})");
         }
     }
 
