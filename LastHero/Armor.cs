@@ -2,59 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using UnityEditor;
 namespace LastHero
 {
-    class Armor : Item
+    [Serializable]
+    public class Armor : Item
     {
-        internal int strengthValue;
-        internal int agilityValue;
-        internal int intelliganceValue;
-
-        internal string type;
+        public int strengthValue;
+        public int agilityValue;
+        public int intelliganceValue;
+        public int armorValue;
         public Armor() : base()
         {
-            Name = "Пусто";
-            Quality = 0;
-            Level = 0;
-            State = 0;
-
             strengthValue = 0;
             agilityValue = 0;
             intelliganceValue = 0;
-            type = "Пусто";
+            armorValue = 0;
+            type = "Защитное снаряжение";
         }
         public Armor(string _name, int _quality, int _level, int _state) : base(_name, _quality, _level, _state)
         {
-            Name = _name;
-            Quality = _quality;
-            Level = _level;
-            State = _state;
-
             strengthValue = 0;
             agilityValue = 0;
             intelliganceValue = 0;
-            type = "Пусто";
+            armorValue = 0;
+            type = "Защитное снаряжение";
         }
 
-        public Armor(string _name, int _quality, int _level, int _state, int _strengthValue, int _agilityValue, int _intelliganceValue, string _type) : base(_name, _quality, _level, _state)
+        public Armor(string _name, int _quality, int _level, int _state, int _strengthValue, int _agilityValue, int _intelliganceValue, int armorvalue, string _type) : base(_name, _quality, _level, _state)
         {
-            Name = _name;
-            Quality = _quality;
-            Level = _level;
-            State = _state;
-
-            strengthValue = 0;
-            agilityValue = 0;
-            intelliganceValue = 0;
-            type = "Пусто";
+            strengthValue = _strengthValue;
+            agilityValue = _agilityValue;
+            intelliganceValue = _intelliganceValue;
+            armorValue = armorvalue;
+            type = _type;
         }
 
         public override string ToString()
         {
             try
             {
-                return ($"{Name} ({Level} ур., {Quality}*) {strengthValue} - {agilityValue} - {intelliganceValue}");
+                return ($"{Name} ({strengthValue}-{agilityValue}-{intelliganceValue})\nЗащита:{armorValue} Уровень:{Level} Качество:{Quality} Состояние:{State}%");
             }
             catch (Exception)
             {

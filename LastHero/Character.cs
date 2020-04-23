@@ -11,151 +11,302 @@ namespace LastHero
     [Serializable]
     public class Character
     {
-        [NonSerialized]
         public bool ok; // Существование
         public string MainName; // Наименование
+
         // Характеристики
         public int Strength
         {
-            get { if (bodyNode == null) return 0; return strength + bodyNode.SumStrength; }
-            set { strength = value; }
+            get 
+            { 
+                if (bodyNode == null) 
+                    return 0; 
+                return bodyNode.SumStrength + StrengthStats; 
+            }
         }
-        int strength; // Сила
         public int Agility
         {
-            get { if (bodyNode == null) return 0; return agility + bodyNode.SumAgility; }
-            set { agility = value; }
+            get 
+            { 
+                if (bodyNode == null) 
+                    return 0;
+                return AgilityStats + bodyNode.SumAgility; 
+            }
         }
-        int agility; // Ловкость    
         public int Intelligance
         {
-            get { if (bodyNode == null) return 0; return intelligance + bodyNode.SumIntelligance; }
-            set { intelligance = value; }
+            get 
+            {              
+                if (bodyNode == null) 
+                    return 0;
+                return IntelliganceStats + bodyNode.SumIntelligance; 
+            }
         }
-        int intelligance; // Интеллект
 
-        public int Communication;
-        public int Karma;
-        public int Leadership;
+        public int StrengthStats; // Сила
+        public int AgilityStats; // Ловкость    
+        public int IntelliganceStats; // Интеллект
+        public int Leadership; // Лидерство
 
-        // Точность
-        public float Accuaracy { get { return Agility * 0.2f; } }
+        public float Accuaracy { get { return Agility * 0.2f; } } // Точность
 
-        // Выносливость
-        public float MaxEndurance { get { return maxEnduranceValue + (Agility * 0.2f) + (Leadership * 0.5f); } set { maxEnduranceValue = value; } } // Макс. выносливость
+        //
+        public float MaxEndurance { get { return maxEnduranceValue + Agility * 0.15f + Leadership * 0.5f; } set { maxEnduranceValue = value; } } // 
+        public float Endurance
+        { 
+            get { if (bodyNode !=null) return endurance; else return endurance; }
+            set { if (endurance > MaxEndurance) endurance = MaxEndurance; else endurance = value; }
+        } 
+        float endurance; // Выносливость
         float maxEnduranceValue;
-        internal float Endurance; // Выносливость
-        internal float PercentEndurance { get { return Endurance * 100 / MaxEndurance; } } // Процент от максимального запаса
 
-        // Здоровье
-        public float MaxHealth { get { return maxHealthValue + (Strength * 0.5f) + (Leadership * 1); } set { maxHealthValue = value; } } // Макс. Здоровье
+        //
+        public float MaxHealth { 
+            get {
+                //if (bodyNode != null)
+                //    return bodyNode.SumMaxStatus;
+                //else
+                return maxHealthValue + Strength * 0.25f + Leadership * 1; 
+            } 
+            set
+            {
+                maxHealthValue = value;
+            } 
+        }
+
+        public float Health {
+            get 
+            {
+                if (bodyNode != null)
+                    return bodyNode.SumStatus;
+                else
+                    return health;
+            } 
+            set 
+            {
+                health = value; 
+                if (health > MaxHealth)
+                {
+                    health = MaxHealth;
+                    ok = true;
+                }
+                else if (health < 0)
+                {
+                    health = 0;
+                    ok = false;
+                    Kill();
+                }
+            } 
+        }   
+        float health; // Здоровье  
         float maxHealthValue;
-        internal float Health; // Здоровье      
-        internal float PercentHealth { get { return Health * 100 / MaxHealth; } } // Процент от максимального запаса
-        internal float HealthRegenPercent { get { return ((MaxHealth / Strength) * 0.05f); } } // Реген. Здоровья
 
-        // Защита
-        internal float ArmorValue { get { return Agility * 0.2f; } } // Общая защита
+        public float ArmorValue { get { return bodyNode.SumArmor; } } // Общая защита
 
-        // Атака
-        float AverageAttack { get { return (minAttack + maxAttack) / 2; } }// Атака
-        internal float minAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.minDamage; } } // Мин. Атака
-        internal float maxAttack { get { if (weaponNode == null) weaponNode = new Weapon("Кулаки", 1, 1, 1); return weaponNode.maxDamage; } } // Макс. Атака
+        internal float AverageAttack { get { return ((minAttack + maxAttack) / 2); } } // Атака
+        internal float minAttack { get { return (weaponNode.minDamage + ((AgilityStats + StrengthStats) * 0.01f)); } } // Мин. Атака
+        internal float maxAttack { get { return (weaponNode.maxDamage + ((AgilityStats + StrengthStats) * 0.01f)); } } // Макс. Атака
 
         // Другое
-        public int Level; // Уровень
-        public int XP; // Опыт
-        internal Weapon weaponNode;
-        internal PartBodyNode bodyNode; // Узел для частей тела
+        public int Level 
+        {
+            get
+            {
+                return level;
+            }
+            set
+            {
+                level = value;
+                if (level % 10 == 0)
+                    Leadership=level/10;
+            }
+        } // Уровень
+        int level;
+        public int XP
+        {
+            get
+            {
+                if (xp > (Level * 1000))
+                {
+                    LevelUP();
+                };
+                return xp;
+            }
+            set
+            {
+                xp = value;
+            }
+        }// Опыт
+        int xp;
+        public Weapon weaponNode;
+        public PartBodyNode bodyNode; // Узел для частей тела
+        public string Info;
 
         public Character()
         {
-            CreateStartСharacteristics();
-            MainName = null;
-            MaxHealth = 0;
-            Health = MaxHealth;
+            MainName = null;          
             Level = 0;
             XP = 0;
-            Endurance = 0;
-            MaxEndurance = 0;
-            weaponNode = null;
-            Strength = 0;
-            Agility = 0;
-            Intelligance = 0;
-            Leadership = 0;
-            Karma = 0;
-
-        }
-        public Character(string _name, float _health, float _maxEndurance, int s, int a, int i)
-        {
-            Strength = s;
-            Agility = a;
-            Intelligance = i;
-            Leadership = 0;
-            Karma = 0;
-            Level = 1;
-            XP = 1;
-            MainName = _name;
+            Info = "";
+            weaponNode = null;            
             ok = true;
-            bodyNode = new PartBodyNode(_health);
-            Endurance = _maxEndurance;
+            StrengthStats = 0;
+            AgilityStats = 0;
+            IntelliganceStats = 0;
+            Leadership = 0;
+            Endurance = MaxEndurance = 0;
+            Health = 0;
+            MaxHealth = Health;
+        }
+        public Character(string _name, float _health, float _maxEndurance, int s, int a, int i, string info)
+        {
+            StrengthStats = s;
+            AgilityStats = a;
+            IntelliganceStats = i;
+            Leadership = 0;
+            Level = 1;
+            Info = info;
+            XP = 0;
+            MainName = _name;
+            ok = true; 
+            MaxHealth = _health + Strength * 0.5f;
+            bodyNode = new PartBodyNode(MaxHealth);
+            weaponNode = new Weapon();
             MaxEndurance = _maxEndurance;
-            weaponNode = null;
-            MaxHealth = _health;
-            Health = MaxHealth;
+            Endurance = MaxEndurance;
+            UpdateAll();
         }
 
-        internal void ToTake(Item _item)
+        public void ToTake(Item _item)
         {
             if (_item is Weapon)
             {
                 weaponNode = _item as Weapon;
             }
-        }
-
-
-        internal void ToAttack(Character person, PartBody node)
-        {
-            if ((ok) && (person.ok))
+            if (_item is Armor)
             {
-                node.RandomDamage(this.minAttack, this.maxAttack);
-                Refresh();
-                person.Refresh();
-                // Убийство противника
-                if (person.ok == false)
+                switch (_item.type)
                 {
-                    XP += ((person.Level + 1) * 10);
+                    case "Шлем":
+                        bodyNode.head.armorSet = _item as Armor;
+                        break;
+                    case "Туловище":
+                        bodyNode.body.armorSet = _item as Armor;
+                        break;
+                    case "Левая Рука":
+                        bodyNode.lhand.armorSet = _item as Armor;
+                        break;
+                    case "Правая Рука":
+                        bodyNode.rhand.armorSet = _item as Armor;
+                        break;
+                    case "Левая Нога":
+                        bodyNode.lfoot.armorSet = _item as Armor;
+                        break;
+                    case "Правая Нога":
+                        bodyNode.rfoot.armorSet = _item as Armor;
+                        break;
                 }
             }
         }
+
         /// <summary>
         /// Нанести общее повреждение
         /// </summary>
         /// <param name="value">Значение</param>
-        internal void ToDamage(float value)
+        public void ToDamage(float value)
         {
             if (ok)
             {
-                if (value > Health)
-                    Kill();
-                bodyNode.DistributedDamage(value);
-                Refresh();
+                 bodyNode.DistributedDamage(value);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="enemy"></param>
+        /// <returns>Возвращает кол-во урона (-1 - промах, -2 - нет энергии, -3 - Убийство противника)</returns>
+        public float ToAttack(Character enemy)
+        {
+            if (enemy.ok)
+            {              
+                if (Endurance >= 5) 
+                { 
+                    this.Endurance -= 5;
+                    if (ProbabilityClass.ChanceToHit(this))
+                    {
+                        float d = enemy.bodyNode.DamageToRandomPart(this);
+                        if (enemy.ok)
+                            return d;
+                        else
+                        {
+                            Console.WriteLine("Убийство!");
+                            return -3;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Промах!");
+                        return -1;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Устал!");
+                    return -2;
+                }
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Восстановить здоровье распределительно
         /// </summary>
         /// <param name="value">Значение</param>
-        internal void ToHeal(float value)
+        public void ToHeal(float value)
         {
-            if (ok)
-            {
-                bodyNode.DistributeHealth(value);
-                Refresh();
-            }
-
+            bodyNode.DistributeHealth(value);
+            
         }
 
+
+        public void ChangeStrength(int value)
+        {
+            StrengthStats += value;
+        }
+        public void ChangeAgility(int value)
+        {
+            AgilityStats += value;
+        }
+        public void ChangeIntelligance(int value)
+        {
+            IntelliganceStats += value;
+        }
+        public int CalcReward()
+        {
+            return ((Strength * Agility * Intelligance) / (Strength + Agility + Intelligance));
+        }
+
+        public void GetReward(int value)
+        {
+            XP += value;
+        }
+
+        public void LevelUP()
+        {
+            Level++;
+            StrengthStats+=3;
+            AgilityStats += 3;
+            IntelliganceStats += 3;
+            UpdateAll();
+        }
+
+        public void UpdateAll()
+        {
+            bodyNode.CreateMultyplay();
+            bodyNode.UpdateMaxStatusAllParts(MaxHealth);
+            Endurance = MaxEndurance;
+        }
         /// <summary>
         /// Убить персонажа
         /// </summary>
@@ -169,48 +320,26 @@ namespace LastHero
             Endurance = 0;
         }
 
-        private void CreateStartСharacteristics(int s, int a, int i, int c, int k, int l)
-        {
-            Strength = s;
-            Agility = a;
-            Intelligance = i;
-            Communication = c;
-            Karma = k;
-            Leadership = l;
-        }
-        private void CreateStartСharacteristics()
-        {
-            Strength = 1;
-            Agility = 1;
-            Intelligance = 1;
-            Communication = 0;
-            Karma = 0;
-            Leadership = 0;
-        }
-
         /// <summary>
         /// Обновить данные
         /// </summary>
         public void Refresh()
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
 
             // Отсутствие головы или тела - мгновенная смерть
             if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
                 Kill();
-
+                       
             if (Endurance > MaxEndurance)
                 Endurance = MaxEndurance;
-            else if (Endurance < 0)
-                Endurance = 0;
+            else if (Endurance < MaxEndurance)
+                Endurance += Agility * 0.0006f;
 
-            // Если здоровье положительное
             if (Health > 0)
             {
                 if (ok)
                 {
-                    bodyNode.DistributeHealth(MaxHealth * HealthRegenPercent);
-                    Health = bodyNode.SumStatus;
+                    ToHeal(Strength * 0.00001f);
                     if (Health > MaxHealth)
                         Health = MaxHealth;
                 }
@@ -228,19 +357,18 @@ namespace LastHero
         public override string ToString()
         {
             return (
-                    $"\nОбщее:\n" +
                     $"{MainName} ({Level} ур.) {XP} xp.\n" +
-                    $"Здоровье:\t{Health} / {MaxHealth} ({PercentHealth}%)\n" +
-                    $"Выносливость:\t{Endurance} / {MaxEndurance} ({PercentEndurance}%)\n" +
-                    $"Защита:\t{ArmorValue}\n" +
-                    $"Атака:\t{minAttack} - {maxAttack}\n" +
-                    $"Оружие:\t{weaponNode.ToString()}\n" +
-                    $" | Характеристики:\n" +
-                    $" | Сила:\t{Strength}\n" +
-                    $" | Ловкость:\t{Agility}\n" +
-                    $" | Интеллект:\t{Intelligance}\n" +
-                    $" | Лидерство:\t{Leadership}\n" +
-                    $" | Карма:\t{Karma}\n");
+                    $"Здоровье: {Health} / {MaxHealth}\n" +
+                    $"Выносливость: {Endurance} / {MaxEndurance}\n" +
+                    $"Сила: {Strength} (+ {bodyNode.SumStrength})\n" +
+                    $"Ловкость: {Agility} (+ {bodyNode.SumAgility})\n" +
+                    $"Интеллект: {Intelligance} (+ {bodyNode.SumIntelligance})\n" +
+                    $"Ср.Урон: {AverageAttack}\n" +
+                    $"Точность: {Accuaracy}\n" +
+                    $"Защита: {ArmorValue}\n" +
+                    $"Лидерство: {Leadership}\n" +
+                    $"\n{weaponNode.ToString()}\n" +
+                    $"\n{bodyNode.ToString()}");
         }
         }
     }
