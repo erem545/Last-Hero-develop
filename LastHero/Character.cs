@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEditor;
 using System.Xml.Serialization;
 using System.IO;
-
+using UnityEngine;
+using UnityEditor;
 namespace LastHero
 {
     [Serializable]
@@ -13,6 +13,7 @@ namespace LastHero
     {
         public bool ok; // Существование
         public string MainName; // Наименование
+        public bool paused; // Остановка внутриигрового процесса
 
         // Характеристики
         public int Strength
@@ -157,6 +158,7 @@ namespace LastHero
             Endurance = MaxEndurance = 0;
             Health = 0;
             MaxHealth = Health;
+            paused = false;
         }
         public Character(string _name, float _health, float _maxEndurance, int s, int a, int i, string info)
         {
@@ -175,6 +177,7 @@ namespace LastHero
             MaxEndurance = _maxEndurance;
             Endurance = MaxEndurance;
             UpdateAll();
+            paused = false;
         }
 
         public void ToTake(Item _item)
@@ -325,32 +328,36 @@ namespace LastHero
         /// </summary>
         public void Refresh()
         {
-
+            bodyNode.Refresh();
             // Отсутствие головы или тела - мгновенная смерть
             if ((bodyNode.head.ok == false) || (bodyNode.body.ok == false))
                 Kill();
-                       
-            if (Endurance > MaxEndurance)
-                Endurance = MaxEndurance;
-            else if (Endurance < MaxEndurance)
-                Endurance += Agility * 0.0006f;
 
-            if (Health > 0)
+            if (!paused)
             {
-                if (ok)
+
+                if (Endurance > MaxEndurance)
+                    Endurance = MaxEndurance;
+                else if (Endurance < MaxEndurance)
+                    Endurance += Agility * 0.0006f;
+
+                if (Health > 0)
                 {
-                    ToHeal(Strength * 0.00001f);
-                    if (Health > MaxHealth)
-                        Health = MaxHealth;
+                    if (ok)
+                    {
+                        ToHeal(Strength * 0.00001f);
+                        if (Health > MaxHealth)
+                            Health = MaxHealth;
+                    }
+                    else
+                    {
+                        Kill();
+                    }
                 }
                 else
                 {
                     Kill();
                 }
-            }
-            else
-            {
-                Kill();
             }
         }
 

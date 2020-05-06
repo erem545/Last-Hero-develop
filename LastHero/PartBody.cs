@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 using UnityEditor;
 namespace LastHero
 {
@@ -40,6 +41,7 @@ namespace LastHero
             }
         }
         float maxstatus; // Макс. Состояние
+        bool paused; // Пауза внутриигровых процессов
 
         internal float multiplayDamage; // Мультипликатор урона
         internal float multiplayOut; // Мультипликатор части тела
@@ -51,6 +53,7 @@ namespace LastHero
             Name = "";
             armorSet = new Armor();
             MaxStatus = 0;
+            paused = false;
         }
 
         /// <summary>
@@ -70,6 +73,7 @@ namespace LastHero
             MaxStatus = (float)Math.Round(_maxStatus * multiplayOut, 3); // ... * Процент от общего кол-ва здоровья
             Status = MaxStatus;
             armorSet = new Armor();
+            paused = false;
         }
 
         /// <summary>
@@ -78,8 +82,8 @@ namespace LastHero
         /// <param Name="stat"></param>
         internal void Heal(float value)
         {
-            
-            Status += value;
+            if (!paused)
+                Status += value;
         }
 
         /// <summary>
@@ -103,7 +107,12 @@ namespace LastHero
         internal void Refresh()
         {
             if (Status <= 0)
+            {
                 Status = 0;
+                ok = false;
+                paused = true;
+            }
+
         }
 
         /// <summary>
@@ -154,11 +163,23 @@ namespace LastHero
         }
         public override string ToString()
         {
+            switch (Name)
+            {
+                case "Голова":      return ($"{Name}:          {Math.Round(Status, 2)} {Math.Round(Status * 100 / MaxStatus)}%\t({MaxStatus})");
+                case "Туловище":    return ($"{Name}:     {Math.Round(Status, 2)} {Math.Round(Status * 100 / MaxStatus)}%\t({MaxStatus})");
+                case "Левая Рука":  return ($"{Name}:   {Math.Round(Status, 2)} {Math.Round(Status * 100 / MaxStatus)}%\t({MaxStatus})");
+                case "Правая Рука": return ($"{Name}: {Math.Round(Status, 2)} {Math.Round(Status * 100 / MaxStatus)}%\t({MaxStatus})");
+                case "Левая Нога":  return ($"{Name}:   {Math.Round(Status, 2)} {Math.Round(Status * 100 / MaxStatus)}%\t({MaxStatus})");
+                case "Правая Нога": return ($"{Name}: {Math.Round(Status, 2)} {Math.Round(Status * 100 / MaxStatus)}%\t({MaxStatus})");
+                default:
+                    return ($"{Name}: {Math.Round(Status, 1)} {Math.Round(Status * 100 / MaxStatus)}% ({MaxStatus})");
+
+            }
             //if (armorSet == null)
             //    return ($"{Name}: {Status} / {MaxStatus}");
             //else
             //    return ($"{Name}: {Status} / {MaxStatus}\n{armorSet.ToString()}");
-            return ($"{Name}: {Math.Round(Status, 2)} / {Math.Round(Status * 100 / MaxStatus)}% ({MaxStatus})");
+            
         }
     }
 
@@ -292,26 +313,38 @@ namespace LastHero
                 case 0:
                     if (body.ok)
                         dmg = body.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 1:
                     if (head.ok)
                         dmg = head.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 2:
                     if (lhand.ok)
                         dmg = lhand.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 3:
                     if (rhand.ok)
                         dmg = rhand.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 4:
                     if (lfoot.ok)
                         dmg = lfoot.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 5:
                     if (rfoot.ok)
                         dmg = rfoot.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
             }
             Console.WriteLine($"от {enemy.MainName}");
@@ -329,26 +362,38 @@ namespace LastHero
                 case 0:
                     if (body.ok)
                         body.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 1:
                     if (head.ok)
                         head.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 2:
                     if (lhand.ok)
                         lhand.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 3:
                     if (rhand.ok)
                         rhand.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 4:
                     if (lfoot.ok)
                         lfoot.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
                 case 5:
                     if (rfoot.ok)
                         rfoot.Damage(RandomDamage(min, max));
+                    else
+                        DamageToRandomPart(min);
                     break;
             }
         }
